@@ -1,0 +1,39 @@
+{
+  "name": "app",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "biome lint .",
+    "format": "biome check --write --linter-enabled=false ."
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.7.1",
+    "@hugeicons/core-free-icons": "catalog:",
+    "@hugeicons/react": "catalog:",
+    "@tanstack/react-query": "^5.101.4",
+    "@tanstack/react-router": "^1.170.27",
+    "@tanstack/react-table": "^8.21.3",
+    "@workspace/shared": "workspace:*",
+    "@workspace/ui": "workspace:*",
+    "better-auth": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-hook-form": "^7.85.0",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@tanstack/router-plugin": "^1.168.30",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "^6.0.5",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

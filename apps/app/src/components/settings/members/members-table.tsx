@@ -1,0 +1,261 @@
+import {
+  ArrowLeft01Icon,
+  ArrowLeftDoubleIcon,
+  ArrowRight01Icon,
+  ArrowRightDoubleIcon,
+  PlusSignIcon,
+  SearchIcon,
+} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { useSuspenseQuery } from "@tanstack/react-query"
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  useReactTable,
+} from "@tanstack/react-table"
+import { useState } from "react"
+
+import { Button } from "@workspace/ui/components/button"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@workspace/ui/components/input-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { InviteMemberDialog } from "@/components/settings/members/invite-member-dialog"
+import { MemberRowActions } from "@/components/settings/members/member-row-actions"
+import { MemberRoleSelect } from "@/components/settings/members/select-role"
+import { SortableHeader } from "@/components/sortable-header"
+import {
+  activeMemberQueryOptions,
+  type OrganizationMember,
+} from "@/lib/auth/organization"
+import { useCheckPermission } from "@/lib/auth/permissions"
+
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  dateStyle: "medium",
+})
+
+function MemberName({ member }: { member: OrganizationMember }) {
+  const { data: activeMember } = useSuspenseQuery(activeMemberQueryOptions())
+  return member.userId === activeMember.userId
+    ? `${member.user.name} (You)`
+    : member.user.name
+}
+
+type MembersTableProps = {
+  data: OrganizationMember[]
+}
+
+export function MembersTable({ data }: MembersTableProps) {
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [inviteOpen, setInviteOpen] = useState(false)
+  const canInvite = useCheckPermission({ invitation: ["create"] })
+
+  const columns: ColumnDef<OrganizationMember>[] = [
+    {
+      accessorFn: (row) => row.user.name,
+      id: "name",
+      header: ({ column }) => <SortableHeader column={column} title="Name" />,
+      cell: ({ row }) => <MemberName member={row.original} />,
+    },
+    {
+      accessorFn: (row) => row.user.email,
+      id: "email",
+      header: "Email",
+      cell: ({ row }) => row.original.user.email,
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => <MemberRoleSelect member={row.original} />,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <SortableHeader column={column} title="Member since" />
+      ),
+      cell: ({ row }) => dateFormatter.format(new Date(row.original.createdAt)),
+    },
+    {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => <MemberRowActions member={row.original} />,
+    },
+  ]
+
+  const table = useReactTable({
+    data,
+    columns,
+    getRowId: (row) => row.id,
+    onColumnFiltersChange: setColumnFilters,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      columnFilters,
+      sorting,
+    },
+  })
+
+  return (
+    <div>
+      <div className="mb-5 flex items-center justify-between gap-4">
+        <InputGroup className="max-w-xs">
+          <InputGroupInput
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            placeholder="Search members..."
+          />
+          <InputGroupAddon>
+            <HugeiconsIcon icon={SearchIcon} strokeWidth={2} />
+          </InputGroupAddon>
+        </InputGroup>
+        <Button onClick={() => setInviteOpen(true)} disabled={!canInvite}>
+          <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+          Invite member
+        </Button>
+      </div>
+      <div className="overflow-hidden rounded-2xl border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className={
+                      header.column.id === "actions" ? "w-0" : undefined
+                    }
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      className={
+                        cell.column.id === "actions" ? "w-0" : undefined
+                      }
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  No results
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center gap-4">
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => table.setPageSize(Number(value))}
+          >
+            <SelectTrigger className="w-20">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-sm font-medium">Rows per page</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium pr-2">
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount() || 1}
+          </span>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <HugeiconsIcon icon={ArrowLeftDoubleIcon} strokeWidth={2} />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            <HugeiconsIcon icon={ArrowRightDoubleIcon} strokeWidth={2} />
+          </Button>
+        </div>
+      </div>
+
+      <InviteMemberDialog open={inviteOpen} onOpenChange={setInviteOpen} />
+    </div>
+  )
+}

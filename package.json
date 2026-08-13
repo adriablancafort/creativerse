@@ -1,0 +1,15 @@
+{
+  "name": "creativerse",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome lint .",
+    "format": "biome check --write --linter-enabled=false ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "typescript": "catalog:",
+    "zod": "catalog:"
+  }
+}

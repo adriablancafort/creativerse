@@ -1,0 +1,8 @@
+node_modules
+dist
+
+.tanstack
+
+.env
+
+.DS_Store
