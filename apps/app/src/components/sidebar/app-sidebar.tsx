@@ -10,11 +10,13 @@ import {
 import { NavMain } from "@/components/sidebar/nav-main"
 import { NavUser } from "@/components/sidebar/nav-user"
 import { OrganizationSwitcher } from "@/components/sidebar/organization-switcher"
+import { SidebarLogo } from "@/components/sidebar/sidebar-logo"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
+        <SidebarLogo />
         <OrganizationSwitcher />
       </SidebarHeader>
       <SidebarContent>
