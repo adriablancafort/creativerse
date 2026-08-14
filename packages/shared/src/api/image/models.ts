@@ -195,6 +195,12 @@ export const imageModels = [
 ] as const satisfies readonly ImageModelConfig[]
 
 export type ImageModel = ImageModelConfig
+export type ImageModelId = (typeof imageModels)[number]["id"]
+
+export const imageModelIds = imageModels.map((model) => model.id) as [
+  ImageModelId,
+  ...ImageModelId[],
+]
 
 export function getImageModel(id: string): ImageModel {
   const model = imageModels.find((item) => item.id === id)
@@ -204,4 +210,16 @@ export function getImageModel(id: string): ImageModel {
   }
 
   return model as ImageModel
+}
+
+export function imageModelAspectRatios(
+  model: ImageModel
+): readonly ImageAspectRatio[] {
+  return model.aspectRatios ?? imageAspectRatios
+}
+
+const imageSessionTitleMaxLength = 72
+
+export function imageSessionTitleFromPrompt(prompt: string) {
+  return prompt.trim().replace(/\s+/g, " ").slice(0, imageSessionTitleMaxLength)
 }

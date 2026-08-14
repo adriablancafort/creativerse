@@ -3,7 +3,7 @@ import { createMiddleware } from "hono/factory"
 import { auth } from "@/lib/auth/config"
 
 export const requireOrganization = createMiddleware<{
-  Variables: { organizationId: string }
+  Variables: { organizationId: string; userId: string }
 }>(async (c, next) => {
   const result = await auth.api.getSession({ headers: c.req.raw.headers })
 
@@ -18,6 +18,7 @@ export const requireOrganization = createMiddleware<{
   }
 
   c.set("organizationId", organizationId)
+  c.set("userId", result.user.id)
 
   await next()
 })
