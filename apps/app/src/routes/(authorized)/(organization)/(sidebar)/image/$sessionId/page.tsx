@@ -70,9 +70,9 @@ function Header({ title }: { title: string }) {
         orientation="vertical"
         className="mr-2 data-[orientation=vertical]:h-4 data-[orientation=vertical]:self-center"
       />
-      <Breadcrumb className="min-w-0">
+      <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem className="min-w-0">
+          <BreadcrumbItem>
             <BreadcrumbPage className="truncate">{title}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
@@ -95,18 +95,8 @@ function Composer({
         `/api/image/sessions/${sessionId}/generations`,
         { body: values }
       ),
-    onSuccess: (generation) => {
-      queryClient.setQueryData<ImageSessionResponse>(
-        ["image-session", sessionId],
-        (current) =>
-          current
-            ? {
-                ...current,
-                updatedAt: generation.createdAt,
-                generations: [...current.generations, generation],
-              }
-            : current
-      )
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["image-session", sessionId] })
       queryClient.invalidateQueries({ queryKey: ["image-sessions"] })
     },
     onError: (error) => {

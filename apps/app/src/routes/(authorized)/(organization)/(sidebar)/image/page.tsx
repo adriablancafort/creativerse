@@ -5,7 +5,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router"
 
 import type {
   CreateImageGenerationRequest,
-  ImageSessionListResponse,
   ImageSessionResponse,
 } from "@workspace/shared/api/image/types"
 import {
@@ -61,19 +60,7 @@ function Composer() {
         body: values,
       }),
     onSuccess: (createdSession) => {
-      queryClient.setQueryData(
-        ["image-session", createdSession.id],
-        createdSession
-      )
-      queryClient.setQueryData<ImageSessionListResponse>(
-        ["image-sessions"],
-        (current) => [
-          createdSession,
-          ...(current ?? []).filter(
-            (session) => session.id !== createdSession.id
-          ),
-        ]
-      )
+      queryClient.invalidateQueries({ queryKey: ["image-sessions"] })
       navigate({
         to: "/image/$sessionId",
         params: { sessionId: createdSession.id },
