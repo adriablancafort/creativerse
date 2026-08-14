@@ -5,6 +5,7 @@ import { logger } from "hono/logger"
 import { auth } from "@/lib/auth/config"
 import { env } from "@/lib/env"
 import { imageRoutes } from "@/routes/image"
+import { videoRoutes } from "@/routes/video"
 
 const api = new Hono()
 
@@ -25,5 +26,6 @@ api.on(["POST", "GET"], "/api/auth/*", (c) => {
 })
 
 api.route("/api/image", imageRoutes)
+api.route("/api/video", videoRoutes)
 
 export default api
