@@ -32,6 +32,21 @@ async function request<T>(
   return body as T
 }
 
+async function upload<T>(path: string, body: FormData): Promise<T> {
+  const response = await fetch(`${env.API_URL}${path}`, {
+    method: "POST",
+    credentials: "include",
+    body,
+  })
+  const payload = await response.json()
+
+  if (!response.ok) {
+    throw new Error(payload.error || payload.message || response.status)
+  }
+
+  return payload as T
+}
+
 export const api = {
   get<T>(path: string, options?: RequestOptions) {
     return request<T>("GET", path, options)
@@ -48,4 +63,5 @@ export const api = {
   delete<T>(path: string, options?: RequestOptions) {
     return request<T>("DELETE", path, options)
   },
+  upload,
 }

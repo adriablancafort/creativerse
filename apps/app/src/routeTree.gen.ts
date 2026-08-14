@@ -26,11 +26,13 @@ import { Route as authorizedorganizationInviteMembersPageRouteImport } from './r
 import { Route as authorizedorganizationsidebarSplatPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/$/page'
 import { Route as authorizedorganizationsidebarImagePageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/image/page'
 import { Route as authorizedorganizationsidebarSettingsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/page'
+import { Route as authorizedorganizationsidebarVideoPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/video/page'
 import { Route as authorizedorganizationsidebarImageSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/image/$sessionId/page'
 import { Route as authorizedorganizationsidebarSettingsAccountPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/account/page'
 import { Route as authorizedorganizationsidebarSettingsMembersPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/members/page'
 import { Route as authorizedorganizationsidebarSettingsOrganizationPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/organization/page'
 import { Route as authorizedorganizationsidebarSettingsRolesPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/roles/page'
+import { Route as authorizedorganizationsidebarVideoSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/video/$sessionId/page'
 
 const authorizedLayoutRoute = authorizedLayoutRouteImport.update({
   id: '/(authorized)',
@@ -126,6 +128,12 @@ const authorizedorganizationsidebarSettingsPageRoute =
     path: '/',
     getParentRoute: () => authorizedorganizationsidebarSettingsLayoutRoute,
   } as any)
+const authorizedorganizationsidebarVideoPageRoute =
+  authorizedorganizationsidebarVideoPageRouteImport.update({
+    id: '/video/',
+    path: '/video/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 const authorizedorganizationsidebarImageSessionIdPageRoute =
   authorizedorganizationsidebarImageSessionIdPageRouteImport.update({
     id: '/image/$sessionId/',
@@ -156,6 +164,12 @@ const authorizedorganizationsidebarSettingsRolesPageRoute =
     path: '/roles/',
     getParentRoute: () => authorizedorganizationsidebarSettingsLayoutRoute,
   } as any)
+const authorizedorganizationsidebarVideoSessionIdPageRoute =
+  authorizedorganizationsidebarVideoSessionIdPageRouteImport.update({
+    id: '/video/$sessionId/',
+    path: '/video/$sessionId/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/create-organization/': typeof authorizedCreateOrganizationPageRoute
@@ -171,11 +185,13 @@ export interface FileRoutesByFullPath {
   '/$/': typeof authorizedorganizationsidebarSplatPageRoute
   '/image/': typeof authorizedorganizationsidebarImagePageRoute
   '/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
+  '/video/': typeof authorizedorganizationsidebarVideoPageRoute
   '/image/$sessionId/': typeof authorizedorganizationsidebarImageSessionIdPageRoute
   '/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/settings/roles/': typeof authorizedorganizationsidebarSettingsRolesPageRoute
+  '/video/$sessionId/': typeof authorizedorganizationsidebarVideoSessionIdPageRoute
 }
 export interface FileRoutesByTo {
   '/create-organization': typeof authorizedCreateOrganizationPageRoute
@@ -190,11 +206,13 @@ export interface FileRoutesByTo {
   '/$': typeof authorizedorganizationsidebarSplatPageRoute
   '/image': typeof authorizedorganizationsidebarImagePageRoute
   '/settings': typeof authorizedorganizationsidebarSettingsPageRoute
+  '/video': typeof authorizedorganizationsidebarVideoPageRoute
   '/image/$sessionId': typeof authorizedorganizationsidebarImageSessionIdPageRoute
   '/settings/account': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/members': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/settings/organization': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/settings/roles': typeof authorizedorganizationsidebarSettingsRolesPageRoute
+  '/video/$sessionId': typeof authorizedorganizationsidebarVideoSessionIdPageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -215,11 +233,13 @@ export interface FileRoutesById {
   '/(authorized)/(organization)/(sidebar)/$/': typeof authorizedorganizationsidebarSplatPageRoute
   '/(authorized)/(organization)/(sidebar)/image/': typeof authorizedorganizationsidebarImagePageRoute
   '/(authorized)/(organization)/(sidebar)/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
+  '/(authorized)/(organization)/(sidebar)/video/': typeof authorizedorganizationsidebarVideoPageRoute
   '/(authorized)/(organization)/(sidebar)/image/$sessionId/': typeof authorizedorganizationsidebarImageSessionIdPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/roles/': typeof authorizedorganizationsidebarSettingsRolesPageRoute
+  '/(authorized)/(organization)/(sidebar)/video/$sessionId/': typeof authorizedorganizationsidebarVideoSessionIdPageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -237,11 +257,13 @@ export interface FileRouteTypes {
     | '/$/'
     | '/image/'
     | '/settings/'
+    | '/video/'
     | '/image/$sessionId/'
     | '/settings/account/'
     | '/settings/members/'
     | '/settings/organization/'
     | '/settings/roles/'
+    | '/video/$sessionId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/create-organization'
@@ -256,11 +278,13 @@ export interface FileRouteTypes {
     | '/$'
     | '/image'
     | '/settings'
+    | '/video'
     | '/image/$sessionId'
     | '/settings/account'
     | '/settings/members'
     | '/settings/organization'
     | '/settings/roles'
+    | '/video/$sessionId'
   id:
     | '__root__'
     | '/(authorized)'
@@ -280,11 +304,13 @@ export interface FileRouteTypes {
     | '/(authorized)/(organization)/(sidebar)/$/'
     | '/(authorized)/(organization)/(sidebar)/image/'
     | '/(authorized)/(organization)/(sidebar)/settings/'
+    | '/(authorized)/(organization)/(sidebar)/video/'
     | '/(authorized)/(organization)/(sidebar)/image/$sessionId/'
     | '/(authorized)/(organization)/(sidebar)/settings/account/'
     | '/(authorized)/(organization)/(sidebar)/settings/members/'
     | '/(authorized)/(organization)/(sidebar)/settings/organization/'
     | '/(authorized)/(organization)/(sidebar)/settings/roles/'
+    | '/(authorized)/(organization)/(sidebar)/video/$sessionId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -413,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authorizedorganizationsidebarSettingsPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarSettingsLayoutRoute
     }
+    '/(authorized)/(organization)/(sidebar)/video/': {
+      id: '/(authorized)/(organization)/(sidebar)/video/'
+      path: '/video'
+      fullPath: '/video/'
+      preLoaderRoute: typeof authorizedorganizationsidebarVideoPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
     '/(authorized)/(organization)/(sidebar)/image/$sessionId/': {
       id: '/(authorized)/(organization)/(sidebar)/image/$sessionId/'
       path: '/image/$sessionId'
@@ -447,6 +480,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/roles/'
       preLoaderRoute: typeof authorizedorganizationsidebarSettingsRolesPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarSettingsLayoutRoute
+    }
+    '/(authorized)/(organization)/(sidebar)/video/$sessionId/': {
+      id: '/(authorized)/(organization)/(sidebar)/video/$sessionId/'
+      path: '/video/$sessionId'
+      fullPath: '/video/$sessionId/'
+      preLoaderRoute: typeof authorizedorganizationsidebarVideoSessionIdPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
   }
 }
@@ -483,7 +523,9 @@ interface authorizedorganizationsidebarLayoutRouteChildren {
   authorizedorganizationsidebarPageRoute: typeof authorizedorganizationsidebarPageRoute
   authorizedorganizationsidebarSplatPageRoute: typeof authorizedorganizationsidebarSplatPageRoute
   authorizedorganizationsidebarImagePageRoute: typeof authorizedorganizationsidebarImagePageRoute
+  authorizedorganizationsidebarVideoPageRoute: typeof authorizedorganizationsidebarVideoPageRoute
   authorizedorganizationsidebarImageSessionIdPageRoute: typeof authorizedorganizationsidebarImageSessionIdPageRoute
+  authorizedorganizationsidebarVideoSessionIdPageRoute: typeof authorizedorganizationsidebarVideoSessionIdPageRoute
 }
 
 const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsidebarLayoutRouteChildren =
@@ -496,8 +538,12 @@ const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsi
       authorizedorganizationsidebarSplatPageRoute,
     authorizedorganizationsidebarImagePageRoute:
       authorizedorganizationsidebarImagePageRoute,
+    authorizedorganizationsidebarVideoPageRoute:
+      authorizedorganizationsidebarVideoPageRoute,
     authorizedorganizationsidebarImageSessionIdPageRoute:
       authorizedorganizationsidebarImageSessionIdPageRoute,
+    authorizedorganizationsidebarVideoSessionIdPageRoute:
+      authorizedorganizationsidebarVideoSessionIdPageRoute,
   }
 
 const authorizedorganizationsidebarLayoutRouteWithChildren =
