@@ -20,7 +20,30 @@ function extensionFromContentType(contentType: string) {
     return "webp"
   }
 
+  if (contentType.includes("mp4")) {
+    return "mp4"
+  }
+
   return "png"
+}
+
+async function uploadObject(options: {
+  key: string
+  filename: string
+  body: Buffer
+  contentType: string
+}) {
+  await client.send(
+    new PutObjectCommand({
+      Bucket: env.R2_BUCKET,
+      Key: options.key,
+      Body: options.body,
+      ContentType: options.contentType,
+      ContentDisposition: `attachment; filename="${options.filename}"`,
+    })
+  )
+
+  return `${env.R2_PUBLIC_URL}/${options.key}`
 }
 
 export async function uploadGeneratedImage(options: {
@@ -34,15 +57,45 @@ export async function uploadGeneratedImage(options: {
   const filename = `${options.imageId}.${extension}`
   const key = `${options.organizationId}/${options.generationId}/${filename}`
 
-  await client.send(
-    new PutObjectCommand({
-      Bucket: env.R2_BUCKET,
-      Key: key,
-      Body: options.body,
-      ContentType: options.contentType,
-      ContentDisposition: `attachment; filename="${filename}"`,
-    })
-  )
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType: options.contentType,
+  })
+}
 
-  return `${env.R2_PUBLIC_URL}/${key}`
+export async function uploadGeneratedVideo(options: {
+  organizationId: string
+  generationId: string
+  body: Buffer
+  contentType: string
+}) {
+  const filename = `${options.generationId}.mp4`
+  const key = `${options.organizationId}/${options.generationId}/${filename}`
+
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType: options.contentType || "video/mp4",
+  })
+}
+
+export async function uploadVideoFrame(options: {
+  organizationId: string
+  assetId: string
+  body: Buffer
+  contentType: string
+}) {
+  const extension = extensionFromContentType(options.contentType)
+  const filename = `${options.assetId}.${extension}`
+  const key = `${options.organizationId}/uploads/${filename}`
+
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType: options.contentType,
+  })
 }
