@@ -69,9 +69,11 @@ const inputGroupButtonVariants = cva(
     variants: {
       size: {
         xs: "h-6 gap-1 px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
-        sm: "",
+        sm: "h-8 gap-1.5 px-2.5 [&>svg:not([class*='size-'])]:size-4",
         "icon-xs": "size-6 p-0 has-[>svg]:p-0",
         "icon-sm": "size-8 p-0 has-[>svg]:p-0",
+        "icon-lg":
+          "size-10 p-0 has-[>svg]:p-0 [&_svg:not([class*='size-'])]:size-6",
       },
     },
     defaultVariants: {

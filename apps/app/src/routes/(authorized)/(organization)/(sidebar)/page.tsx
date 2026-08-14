@@ -1,11 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/(authorized)/(organization)/(sidebar)/")(
   {
-    component: Page,
+    beforeLoad: () => {
+      throw redirect({ to: "/image" })
+    },
   }
 )
-
-function Page() {
-  return <div>GenAI Platform</div>
-}

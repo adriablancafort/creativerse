@@ -202,6 +202,9 @@ export const imageModelIds = imageModels.map((model) => model.id) as [
   ...ImageModelId[],
 ]
 
+export const defaultImageModelId = "seedream-4-5" satisfies ImageModelId
+export const defaultImageAspectRatio = "1:1" satisfies ImageAspectRatio
+
 export function getImageModel(id: string): ImageModel {
   const model = imageModels.find((item) => item.id === id)
 
@@ -218,8 +221,24 @@ export function imageModelAspectRatios(
   return model.aspectRatios ?? imageAspectRatios
 }
 
+export function imageModelCounts(model: ImageModel): ImageCount[] {
+  return imageCounts.filter((count) => count <= model.maxCount)
+}
+
+export function aspectRatioToCss(ratio: string) {
+  return ratio.replace(":", "/")
+}
+
 const imageSessionTitleMaxLength = 72
 
 export function imageSessionTitleFromPrompt(prompt: string) {
   return prompt.trim().replace(/\s+/g, " ").slice(0, imageSessionTitleMaxLength)
+}
+
+export function formatImageSessionTitle(title: string) {
+  if (title.length < imageSessionTitleMaxLength) {
+    return title
+  }
+
+  return `${title}...`
 }

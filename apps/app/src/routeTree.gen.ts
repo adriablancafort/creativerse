@@ -24,7 +24,9 @@ import { Route as authorizedorganizationsidebarPageRouteImport } from './routes/
 import { Route as authorizedorganizationsidebarSettingsLayoutRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/layout'
 import { Route as authorizedorganizationInviteMembersPageRouteImport } from './routes/(authorized)/(organization)/invite-members/page'
 import { Route as authorizedorganizationsidebarSplatPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/$/page'
+import { Route as authorizedorganizationsidebarImagePageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/image/page'
 import { Route as authorizedorganizationsidebarSettingsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/page'
+import { Route as authorizedorganizationsidebarImageSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/image/$sessionId/page'
 import { Route as authorizedorganizationsidebarSettingsAccountPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/account/page'
 import { Route as authorizedorganizationsidebarSettingsMembersPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/members/page'
 import { Route as authorizedorganizationsidebarSettingsOrganizationPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/organization/page'
@@ -112,11 +114,23 @@ const authorizedorganizationsidebarSplatPageRoute =
     path: '/$/',
     getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
+const authorizedorganizationsidebarImagePageRoute =
+  authorizedorganizationsidebarImagePageRouteImport.update({
+    id: '/image/',
+    path: '/image/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 const authorizedorganizationsidebarSettingsPageRoute =
   authorizedorganizationsidebarSettingsPageRouteImport.update({
     id: '/',
     path: '/',
     getParentRoute: () => authorizedorganizationsidebarSettingsLayoutRoute,
+  } as any)
+const authorizedorganizationsidebarImageSessionIdPageRoute =
+  authorizedorganizationsidebarImageSessionIdPageRouteImport.update({
+    id: '/image/$sessionId/',
+    path: '/image/$sessionId/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
 const authorizedorganizationsidebarSettingsAccountPageRoute =
   authorizedorganizationsidebarSettingsAccountPageRouteImport.update({
@@ -155,7 +169,9 @@ export interface FileRoutesByFullPath {
   '/': typeof authorizedorganizationsidebarPageRoute
   '/invite-members/': typeof authorizedorganizationInviteMembersPageRoute
   '/$/': typeof authorizedorganizationsidebarSplatPageRoute
+  '/image/': typeof authorizedorganizationsidebarImagePageRoute
   '/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
+  '/image/$sessionId/': typeof authorizedorganizationsidebarImageSessionIdPageRoute
   '/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
@@ -172,7 +188,9 @@ export interface FileRoutesByTo {
   '/': typeof authorizedorganizationsidebarPageRoute
   '/invite-members': typeof authorizedorganizationInviteMembersPageRoute
   '/$': typeof authorizedorganizationsidebarSplatPageRoute
+  '/image': typeof authorizedorganizationsidebarImagePageRoute
   '/settings': typeof authorizedorganizationsidebarSettingsPageRoute
+  '/image/$sessionId': typeof authorizedorganizationsidebarImageSessionIdPageRoute
   '/settings/account': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/members': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/settings/organization': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
@@ -195,7 +213,9 @@ export interface FileRoutesById {
   '/(authorized)/(organization)/(sidebar)/': typeof authorizedorganizationsidebarPageRoute
   '/(authorized)/(organization)/invite-members/': typeof authorizedorganizationInviteMembersPageRoute
   '/(authorized)/(organization)/(sidebar)/$/': typeof authorizedorganizationsidebarSplatPageRoute
+  '/(authorized)/(organization)/(sidebar)/image/': typeof authorizedorganizationsidebarImagePageRoute
   '/(authorized)/(organization)/(sidebar)/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
+  '/(authorized)/(organization)/(sidebar)/image/$sessionId/': typeof authorizedorganizationsidebarImageSessionIdPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/organization/': typeof authorizedorganizationsidebarSettingsOrganizationPageRoute
@@ -215,7 +235,9 @@ export interface FileRouteTypes {
     | '/'
     | '/invite-members/'
     | '/$/'
+    | '/image/'
     | '/settings/'
+    | '/image/$sessionId/'
     | '/settings/account/'
     | '/settings/members/'
     | '/settings/organization/'
@@ -232,7 +254,9 @@ export interface FileRouteTypes {
     | '/'
     | '/invite-members'
     | '/$'
+    | '/image'
     | '/settings'
+    | '/image/$sessionId'
     | '/settings/account'
     | '/settings/members'
     | '/settings/organization'
@@ -254,7 +278,9 @@ export interface FileRouteTypes {
     | '/(authorized)/(organization)/(sidebar)/'
     | '/(authorized)/(organization)/invite-members/'
     | '/(authorized)/(organization)/(sidebar)/$/'
+    | '/(authorized)/(organization)/(sidebar)/image/'
     | '/(authorized)/(organization)/(sidebar)/settings/'
+    | '/(authorized)/(organization)/(sidebar)/image/$sessionId/'
     | '/(authorized)/(organization)/(sidebar)/settings/account/'
     | '/(authorized)/(organization)/(sidebar)/settings/members/'
     | '/(authorized)/(organization)/(sidebar)/settings/organization/'
@@ -373,12 +399,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authorizedorganizationsidebarSplatPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
+    '/(authorized)/(organization)/(sidebar)/image/': {
+      id: '/(authorized)/(organization)/(sidebar)/image/'
+      path: '/image'
+      fullPath: '/image/'
+      preLoaderRoute: typeof authorizedorganizationsidebarImagePageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
     '/(authorized)/(organization)/(sidebar)/settings/': {
       id: '/(authorized)/(organization)/(sidebar)/settings/'
       path: '/'
       fullPath: '/settings/'
       preLoaderRoute: typeof authorizedorganizationsidebarSettingsPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarSettingsLayoutRoute
+    }
+    '/(authorized)/(organization)/(sidebar)/image/$sessionId/': {
+      id: '/(authorized)/(organization)/(sidebar)/image/$sessionId/'
+      path: '/image/$sessionId'
+      fullPath: '/image/$sessionId/'
+      preLoaderRoute: typeof authorizedorganizationsidebarImageSessionIdPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
     '/(authorized)/(organization)/(sidebar)/settings/account/': {
       id: '/(authorized)/(organization)/(sidebar)/settings/account/'
@@ -442,6 +482,8 @@ interface authorizedorganizationsidebarLayoutRouteChildren {
   authorizedorganizationsidebarSettingsLayoutRoute: typeof authorizedorganizationsidebarSettingsLayoutRouteWithChildren
   authorizedorganizationsidebarPageRoute: typeof authorizedorganizationsidebarPageRoute
   authorizedorganizationsidebarSplatPageRoute: typeof authorizedorganizationsidebarSplatPageRoute
+  authorizedorganizationsidebarImagePageRoute: typeof authorizedorganizationsidebarImagePageRoute
+  authorizedorganizationsidebarImageSessionIdPageRoute: typeof authorizedorganizationsidebarImageSessionIdPageRoute
 }
 
 const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsidebarLayoutRouteChildren =
@@ -452,6 +494,10 @@ const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsi
       authorizedorganizationsidebarPageRoute,
     authorizedorganizationsidebarSplatPageRoute:
       authorizedorganizationsidebarSplatPageRoute,
+    authorizedorganizationsidebarImagePageRoute:
+      authorizedorganizationsidebarImagePageRoute,
+    authorizedorganizationsidebarImageSessionIdPageRoute:
+      authorizedorganizationsidebarImageSessionIdPageRoute,
   }
 
 const authorizedorganizationsidebarLayoutRouteWithChildren =
