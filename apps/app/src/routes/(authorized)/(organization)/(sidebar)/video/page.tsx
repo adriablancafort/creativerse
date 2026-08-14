@@ -2,6 +2,7 @@ import { Video01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { z } from "zod"
 
 import type {
   CreateVideoGenerationRequest,
@@ -26,9 +27,14 @@ import { toast } from "@workspace/ui/components/sonner"
 import { VideoComposer } from "@/components/video/video-composer"
 import { api } from "@/lib/api"
 
+const videoSearchSchema = z.object({
+  startFrameUrl: z.url().optional(),
+})
+
 export const Route = createFileRoute(
   "/(authorized)/(organization)/(sidebar)/video/"
 )({
+  validateSearch: videoSearchSchema,
   component: Page,
 })
 
@@ -52,6 +58,7 @@ function Header() {
 }
 
 function Composer() {
+  const { startFrameUrl } = Route.useSearch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const createSessionMutation = useMutation({
@@ -73,6 +80,8 @@ function Composer() {
 
   return (
     <VideoComposer
+      key={startFrameUrl ?? "new"}
+      initialStartFrameUrl={startFrameUrl}
       isSubmitting={createSessionMutation.isPending}
       onSubmit={(values) => createSessionMutation.mutateAsync(values)}
     />

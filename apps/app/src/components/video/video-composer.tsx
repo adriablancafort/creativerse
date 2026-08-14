@@ -81,6 +81,7 @@ function AspectRatioGlyph({ ratio }: { ratio: string }) {
 type VideoComposerProps = {
   pending?: boolean
   isSubmitting: boolean
+  initialStartFrameUrl?: string | null
   onSubmit: (values: CreateVideoGenerationRequest) => Promise<unknown>
 }
 
@@ -89,6 +90,7 @@ const defaultModel = getVideoModel(defaultVideoModelId)
 export function VideoComposer({
   pending = false,
   isSubmitting,
+  initialStartFrameUrl = null,
   onSubmit,
 }: VideoComposerProps) {
   const { theme } = useTheme()
@@ -107,7 +109,7 @@ export function VideoComposer({
       duration: defaultVideoDuration(defaultModel),
       resolution: defaultVideoResolution(defaultModel),
       generateAudio: true,
-      startFrameUrl: null,
+      startFrameUrl: initialStartFrameUrl,
       endFrameUrl: null,
     },
   })

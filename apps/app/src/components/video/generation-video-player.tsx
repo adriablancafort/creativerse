@@ -63,12 +63,13 @@ export function GenerationVideoPlayer({
           <Button
             type="button"
             variant="secondary"
-            size="icon-sm"
+            size="sm"
             aria-label="Download video"
-            className="absolute top-2 right-2 z-10 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-visible:opacity-100"
+            className="absolute top-3 right-3 z-10 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-visible:opacity-100"
             onClick={() => downloadVideo(videoUrl, filename)}
           >
             <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+            Download
           </Button>
         </>
       ) : generation.status === "failed" ? (

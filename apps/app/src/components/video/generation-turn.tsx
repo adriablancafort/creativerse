@@ -1,7 +1,4 @@
-import {
-  formatVideoDuration,
-  videoModels,
-} from "@workspace/shared/api/video/models"
+import { videoModels } from "@workspace/shared/api/video/models"
 import type { VideoGeneration } from "@workspace/shared/api/video/types"
 import { Badge } from "@workspace/ui/components/badge"
 import { Bubble, BubbleContent } from "@workspace/ui/components/bubble"
@@ -30,17 +27,10 @@ export function GenerationTurn({ generation }: GenerationTurnProps) {
                 {generation.prompt}
               </BubbleContent>
             </Bubble>
-            <MessageFooter className="flex flex-wrap gap-1.5 px-1">
+            <MessageFooter className="px-1">
               <Badge variant="secondary">
                 {model?.name ?? generation.model}
               </Badge>
-              <Badge variant="secondary">
-                {formatVideoDuration(generation.duration)}
-              </Badge>
-              {generation.generateAudio ? (
-                <Badge variant="secondary">Audio</Badge>
-              ) : null}
-              <Badge variant="secondary">{generation.aspectRatio}</Badge>
             </MessageFooter>
           </MessageContent>
         </Message>

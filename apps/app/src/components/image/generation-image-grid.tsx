@@ -1,5 +1,10 @@
-import { Cancel01Icon, Download01Icon } from "@hugeicons/core-free-icons"
+import {
+  AiVideoIcon,
+  Cancel01Icon,
+  Download01Icon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { Link } from "@tanstack/react-router"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 
@@ -8,6 +13,7 @@ import type { ImageGeneration } from "@workspace/shared/api/image/types"
 import { Button } from "@workspace/ui/components/button"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { cn } from "@workspace/ui/lib/utils"
+import { useCheckPermission } from "@/lib/auth/permissions"
 
 type GenerationImageGridProps = {
   generation: ImageGeneration
@@ -68,7 +74,45 @@ function downloadImage(url: string, filename: string) {
   link.click()
 }
 
-function DownloadButton({
+function DownloadButton({ url, filename }: { url: string; filename: string }) {
+  return (
+    <Button
+      type="button"
+      variant="secondary"
+      size="sm"
+      aria-label="Download image"
+      onClick={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        downloadImage(url, filename)
+      }}
+    >
+      <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+      Download
+    </Button>
+  )
+}
+
+function MakeVideoButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ video: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      render={<Link to="/video" search={{ startFrameUrl: url }} />}
+    >
+      <HugeiconsIcon icon={AiVideoIcon} strokeWidth={2} />
+      Make video
+    </Button>
+  )
+}
+
+function ImageActions({
   url,
   filename,
   className,
@@ -78,20 +122,15 @@ function DownloadButton({
   className?: string
 }) {
   return (
-    <Button
-      type="button"
-      variant="secondary"
-      size="icon-sm"
-      aria-label="Download image"
-      className={className}
-      onClick={(event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        downloadImage(url, filename)
-      }}
+    <div
+      className={cn(
+        "absolute top-3 right-3 z-10 flex flex-col items-end gap-2",
+        className
+      )}
     >
-      <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
-    </Button>
+      <MakeVideoButton url={url} />
+      <DownloadButton url={url} filename={filename} />
+    </div>
   )
 }
 
@@ -204,10 +243,10 @@ function ImageLightbox({
           alt={state.alt}
           className="size-full object-cover shadow-2xl"
         />
-        <DownloadButton
+        <ImageActions
           url={state.url}
           filename={`${state.alt.slice(0, 40)}.png`}
-          className="pointer-events-auto absolute right-3 bottom-3 z-10 opacity-0 transition-opacity group-hover/lightbox:opacity-100"
+          className="pointer-events-auto opacity-0 transition-opacity group-hover/lightbox:opacity-100"
         />
       </div>
     </div>,
@@ -268,10 +307,10 @@ export function GenerationImageGrid({ generation }: GenerationImageGridProps) {
                       )}
                     />
                   </button>
-                  <DownloadButton
+                  <ImageActions
                     url={image.url}
                     filename={filename}
-                    className="absolute right-2 bottom-2 z-10 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-visible:opacity-100"
+                    className="opacity-0 transition-opacity group-hover/cell:opacity-100 focus-within:opacity-100"
                   />
                 </>
               ) : image.status === "failed" ? (
