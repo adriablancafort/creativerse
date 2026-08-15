@@ -24,6 +24,14 @@ function extensionFromContentType(contentType: string) {
     return "mp4"
   }
 
+  if (contentType.includes("webm")) {
+    return "webm"
+  }
+
+  if (contentType.includes("quicktime")) {
+    return "mov"
+  }
+
   return "png"
 }
 
@@ -97,5 +105,47 @@ export async function uploadVideoFrame(options: {
     filename,
     body: options.body,
     contentType: options.contentType,
+  })
+}
+
+export async function uploadEnhanceSource(options: {
+  organizationId: string
+  assetId: string
+  body: Buffer
+  contentType: string
+}) {
+  const extension = extensionFromContentType(options.contentType)
+  const filename = `${options.assetId}.${extension}`
+  const key = `${options.organizationId}/uploads/${filename}`
+
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType: options.contentType,
+  })
+}
+
+export async function uploadEnhancedMedia(options: {
+  organizationId: string
+  generationId: string
+  body: Buffer
+  contentType: string
+  mediaType: "image" | "video"
+}) {
+  const extension =
+    options.mediaType === "video"
+      ? "mp4"
+      : extensionFromContentType(options.contentType)
+  const filename = `${options.generationId}.${extension}`
+  const key = `${options.organizationId}/${options.generationId}/${filename}`
+
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType:
+      options.contentType ||
+      (options.mediaType === "video" ? "video/mp4" : "image/png"),
   })
 }
