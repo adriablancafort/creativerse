@@ -1,4 +1,4 @@
-import { Video01Icon } from "@hugeicons/core-free-icons"
+import { AiVideoIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -97,7 +97,7 @@ function Page() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={Video01Icon} strokeWidth={2} />
+              <HugeiconsIcon icon={AiVideoIcon} strokeWidth={2} />
             </EmptyMedia>
             <EmptyTitle>Create a new video</EmptyTitle>
             <EmptyDescription>

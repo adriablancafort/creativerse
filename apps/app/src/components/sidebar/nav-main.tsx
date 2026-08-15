@@ -1,7 +1,7 @@
 import {
   AiImageIcon,
-  AiMagicIcon,
   AiVideoIcon,
+  MagicWand01Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -105,7 +105,7 @@ export function NavMain() {
               isActive={Boolean(matchRoute({ to: "/enhance", fuzzy: false }))}
               render={<Link to="/enhance" />}
             >
-              <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+              <HugeiconsIcon icon={MagicWand01Icon} strokeWidth={2} />
               <span>Enhance</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -1,4 +1,4 @@
-import { Image01Icon } from "@hugeicons/core-free-icons"
+import { AiImageIcon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -88,7 +88,7 @@ function Page() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={Image01Icon} strokeWidth={2} />
+              <HugeiconsIcon icon={AiImageIcon} strokeWidth={2} />
             </EmptyMedia>
             <EmptyTitle>Create a new image</EmptyTitle>
             <EmptyDescription>

@@ -3,7 +3,6 @@ import {
   AiMagicIcon,
   Cancel01Icon,
   ImageAdd01Icon,
-  ImageAdd02Icon,
   Mic01Icon,
   MicOff01Icon,
 } from "@hugeicons/core-free-icons"
@@ -550,7 +549,7 @@ export function CreateVideoComposer({
                 {uploadingFrame === "end" ? (
                   <Spinner />
                 ) : (
-                  <HugeiconsIcon icon={ImageAdd02Icon} strokeWidth={2} />
+                  <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
                 )}
                 End
               </InputGroupButton>

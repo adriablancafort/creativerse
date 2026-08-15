@@ -1,4 +1,4 @@
-import { AiMagicIcon } from "@hugeicons/core-free-icons"
+import { MagicWand01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
@@ -100,7 +100,7 @@ function Page() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+              <HugeiconsIcon icon={MagicWand01Icon} strokeWidth={2} />
             </EmptyMedia>
             <EmptyTitle>Enhance an image or video</EmptyTitle>
             <EmptyDescription>
