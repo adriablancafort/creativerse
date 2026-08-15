@@ -4,6 +4,7 @@ import { logger } from "hono/logger"
 
 import { auth } from "@/lib/auth/config"
 import { env } from "@/lib/env"
+import { enhanceRoutes } from "@/routes/enhance"
 import { imageRoutes } from "@/routes/image"
 import { videoRoutes } from "@/routes/video"
 
@@ -27,5 +28,6 @@ api.on(["POST", "GET"], "/api/auth/*", (c) => {
 
 api.route("/api/image", imageRoutes)
 api.route("/api/video", videoRoutes)
+api.route("/api/enhance", enhanceRoutes)
 
 export default api
