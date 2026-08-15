@@ -1,5 +1,6 @@
-import { Download01Icon } from "@hugeicons/core-free-icons"
+import { AiMagicIcon, Download01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { Link } from "@tanstack/react-router"
 import { createPlayer } from "@videojs/react"
 import { MinimalVideoSkin, Video, videoFeatures } from "@videojs/react/video"
 import "@videojs/react/video/minimal-skin.css"
@@ -9,6 +10,7 @@ import { aspectRatioToCss } from "@workspace/shared/api/video/models"
 import type { VideoGeneration } from "@workspace/shared/api/video/types"
 import { Button } from "@workspace/ui/components/button"
 import { Spinner } from "@workspace/ui/components/spinner"
+import { useCheckPermission } from "@/lib/auth/permissions"
 
 const Player = createPlayer({ features: videoFeatures })
 
@@ -23,6 +25,28 @@ function downloadVideo(url: string, filename: string) {
   link.target = "_blank"
   link.rel = "noopener"
   link.click()
+}
+
+function EnhanceButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ enhance: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
+  return (
+    <Button
+      type="button"
+      variant="secondary"
+      size="sm"
+      render={
+        <Link to="/enhance" search={{ sourceUrl: url, mediaType: "video" }} />
+      }
+    >
+      <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+      Enhance
+    </Button>
+  )
 }
 
 export function GenerationVideoPlayer({
@@ -60,17 +84,19 @@ export function GenerationVideoPlayer({
               />
             </MinimalVideoSkin>
           </Player.Provider>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            aria-label="Download video"
-            className="absolute top-3 right-3 z-10 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-visible:opacity-100"
-            onClick={() => downloadVideo(videoUrl, filename)}
-          >
-            <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
-            Download
-          </Button>
+          <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-2 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-within:opacity-100">
+            <EnhanceButton url={videoUrl} />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              aria-label="Download video"
+              onClick={() => downloadVideo(videoUrl, filename)}
+            >
+              <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+              Download
+            </Button>
+          </div>
         </>
       ) : generation.status === "failed" ? (
         <div className="flex size-full items-center justify-center p-4 text-center text-xs text-muted-foreground">

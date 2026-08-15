@@ -1,4 +1,5 @@
 import {
+  AiMagicIcon,
   AiVideoIcon,
   Cancel01Icon,
   Download01Icon,
@@ -112,6 +113,27 @@ function MakeVideoButton({ url }: { url: string }) {
   )
 }
 
+function EnhanceButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ enhance: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      render={
+        <Link to="/enhance" search={{ sourceUrl: url, mediaType: "image" }} />
+      }
+    >
+      <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+      Enhance
+    </Button>
+  )
+}
+
 function ImageActions({
   url,
   filename,
@@ -128,6 +150,7 @@ function ImageActions({
         className
       )}
     >
+      <EnhanceButton url={url} />
       <MakeVideoButton url={url} />
       <DownloadButton url={url} filename={filename} />
     </div>
