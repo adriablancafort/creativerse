@@ -82,7 +82,6 @@ enhanceRoutes.post(
           title: enhanceSessionTitleFromSource({
             prompt: payload.prompt,
             mediaType: payload.mediaType,
-            sourceUrl: payload.sourceUrl,
           }),
           createdAt: now,
           updatedAt: now,

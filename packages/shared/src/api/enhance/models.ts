@@ -247,7 +247,6 @@ const enhanceSessionTitleMaxLength = 72
 export function enhanceSessionTitleFromSource(options: {
   prompt?: string | null
   mediaType: EnhanceMediaType
-  sourceUrl: string
 }) {
   const prompt = options.prompt?.trim()
 
@@ -255,21 +254,11 @@ export function enhanceSessionTitleFromSource(options: {
     return prompt.replace(/\s+/g, " ").slice(0, enhanceSessionTitleMaxLength)
   }
 
-  try {
-    const pathname = new URL(options.sourceUrl).pathname
-    const filename = pathname.split("/").pop()
-
-    if (filename) {
-      return `Enhance ${decodeURIComponent(filename)}`.slice(
-        0,
-        enhanceSessionTitleMaxLength
-      )
-    }
-  } catch {
-    // ignore invalid urls for title purposes
+  if (options.mediaType === "video") {
+    return "Enhance video"
   }
 
-  return options.mediaType === "video" ? "Enhance video" : "Enhance image"
+  return "Enhance image"
 }
 
 export function formatEnhanceSessionTitle(title: string) {
