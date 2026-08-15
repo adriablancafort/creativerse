@@ -26,10 +26,12 @@ import { Route as authorizedorganizationInviteMembersPageRouteImport } from './r
 import { Route as authorizedorganizationsidebarSplatPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/$/page'
 import { Route as authorizedorganizationsidebarCreateImagePageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/create-image/page'
 import { Route as authorizedorganizationsidebarCreateVideoPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/create-video/page'
+import { Route as authorizedorganizationsidebarEditImagePageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/edit-image/page'
 import { Route as authorizedorganizationsidebarEnhancePageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/enhance/page'
 import { Route as authorizedorganizationsidebarSettingsPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/page'
 import { Route as authorizedorganizationsidebarCreateImageSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/create-image/$sessionId/page'
 import { Route as authorizedorganizationsidebarCreateVideoSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/create-video/$sessionId/page'
+import { Route as authorizedorganizationsidebarEditImageSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/edit-image/$sessionId/page'
 import { Route as authorizedorganizationsidebarEnhanceSessionIdPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/enhance/$sessionId/page'
 import { Route as authorizedorganizationsidebarSettingsAccountPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/account/page'
 import { Route as authorizedorganizationsidebarSettingsMembersPageRouteImport } from './routes/(authorized)/(organization)/(sidebar)/settings/members/page'
@@ -130,6 +132,12 @@ const authorizedorganizationsidebarCreateVideoPageRoute =
     path: '/create-video/',
     getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
+const authorizedorganizationsidebarEditImagePageRoute =
+  authorizedorganizationsidebarEditImagePageRouteImport.update({
+    id: '/edit-image/',
+    path: '/edit-image/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
 const authorizedorganizationsidebarEnhancePageRoute =
   authorizedorganizationsidebarEnhancePageRouteImport.update({
     id: '/enhance/',
@@ -152,6 +160,12 @@ const authorizedorganizationsidebarCreateVideoSessionIdPageRoute =
   authorizedorganizationsidebarCreateVideoSessionIdPageRouteImport.update({
     id: '/create-video/$sessionId/',
     path: '/create-video/$sessionId/',
+    getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
+  } as any)
+const authorizedorganizationsidebarEditImageSessionIdPageRoute =
+  authorizedorganizationsidebarEditImageSessionIdPageRouteImport.update({
+    id: '/edit-image/$sessionId/',
+    path: '/edit-image/$sessionId/',
     getParentRoute: () => authorizedorganizationsidebarLayoutRoute,
   } as any)
 const authorizedorganizationsidebarEnhanceSessionIdPageRoute =
@@ -199,10 +213,12 @@ export interface FileRoutesByFullPath {
   '/$/': typeof authorizedorganizationsidebarSplatPageRoute
   '/create-image/': typeof authorizedorganizationsidebarCreateImagePageRoute
   '/create-video/': typeof authorizedorganizationsidebarCreateVideoPageRoute
+  '/edit-image/': typeof authorizedorganizationsidebarEditImagePageRoute
   '/enhance/': typeof authorizedorganizationsidebarEnhancePageRoute
   '/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
   '/create-image/$sessionId/': typeof authorizedorganizationsidebarCreateImageSessionIdPageRoute
   '/create-video/$sessionId/': typeof authorizedorganizationsidebarCreateVideoSessionIdPageRoute
+  '/edit-image/$sessionId/': typeof authorizedorganizationsidebarEditImageSessionIdPageRoute
   '/enhance/$sessionId/': typeof authorizedorganizationsidebarEnhanceSessionIdPageRoute
   '/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
@@ -222,10 +238,12 @@ export interface FileRoutesByTo {
   '/$': typeof authorizedorganizationsidebarSplatPageRoute
   '/create-image': typeof authorizedorganizationsidebarCreateImagePageRoute
   '/create-video': typeof authorizedorganizationsidebarCreateVideoPageRoute
+  '/edit-image': typeof authorizedorganizationsidebarEditImagePageRoute
   '/enhance': typeof authorizedorganizationsidebarEnhancePageRoute
   '/settings': typeof authorizedorganizationsidebarSettingsPageRoute
   '/create-image/$sessionId': typeof authorizedorganizationsidebarCreateImageSessionIdPageRoute
   '/create-video/$sessionId': typeof authorizedorganizationsidebarCreateVideoSessionIdPageRoute
+  '/edit-image/$sessionId': typeof authorizedorganizationsidebarEditImageSessionIdPageRoute
   '/enhance/$sessionId': typeof authorizedorganizationsidebarEnhanceSessionIdPageRoute
   '/settings/account': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/settings/members': typeof authorizedorganizationsidebarSettingsMembersPageRoute
@@ -251,10 +269,12 @@ export interface FileRoutesById {
   '/(authorized)/(organization)/(sidebar)/$/': typeof authorizedorganizationsidebarSplatPageRoute
   '/(authorized)/(organization)/(sidebar)/create-image/': typeof authorizedorganizationsidebarCreateImagePageRoute
   '/(authorized)/(organization)/(sidebar)/create-video/': typeof authorizedorganizationsidebarCreateVideoPageRoute
+  '/(authorized)/(organization)/(sidebar)/edit-image/': typeof authorizedorganizationsidebarEditImagePageRoute
   '/(authorized)/(organization)/(sidebar)/enhance/': typeof authorizedorganizationsidebarEnhancePageRoute
   '/(authorized)/(organization)/(sidebar)/settings/': typeof authorizedorganizationsidebarSettingsPageRoute
   '/(authorized)/(organization)/(sidebar)/create-image/$sessionId/': typeof authorizedorganizationsidebarCreateImageSessionIdPageRoute
   '/(authorized)/(organization)/(sidebar)/create-video/$sessionId/': typeof authorizedorganizationsidebarCreateVideoSessionIdPageRoute
+  '/(authorized)/(organization)/(sidebar)/edit-image/$sessionId/': typeof authorizedorganizationsidebarEditImageSessionIdPageRoute
   '/(authorized)/(organization)/(sidebar)/enhance/$sessionId/': typeof authorizedorganizationsidebarEnhanceSessionIdPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/account/': typeof authorizedorganizationsidebarSettingsAccountPageRoute
   '/(authorized)/(organization)/(sidebar)/settings/members/': typeof authorizedorganizationsidebarSettingsMembersPageRoute
@@ -277,10 +297,12 @@ export interface FileRouteTypes {
     | '/$/'
     | '/create-image/'
     | '/create-video/'
+    | '/edit-image/'
     | '/enhance/'
     | '/settings/'
     | '/create-image/$sessionId/'
     | '/create-video/$sessionId/'
+    | '/edit-image/$sessionId/'
     | '/enhance/$sessionId/'
     | '/settings/account/'
     | '/settings/members/'
@@ -300,10 +322,12 @@ export interface FileRouteTypes {
     | '/$'
     | '/create-image'
     | '/create-video'
+    | '/edit-image'
     | '/enhance'
     | '/settings'
     | '/create-image/$sessionId'
     | '/create-video/$sessionId'
+    | '/edit-image/$sessionId'
     | '/enhance/$sessionId'
     | '/settings/account'
     | '/settings/members'
@@ -328,10 +352,12 @@ export interface FileRouteTypes {
     | '/(authorized)/(organization)/(sidebar)/$/'
     | '/(authorized)/(organization)/(sidebar)/create-image/'
     | '/(authorized)/(organization)/(sidebar)/create-video/'
+    | '/(authorized)/(organization)/(sidebar)/edit-image/'
     | '/(authorized)/(organization)/(sidebar)/enhance/'
     | '/(authorized)/(organization)/(sidebar)/settings/'
     | '/(authorized)/(organization)/(sidebar)/create-image/$sessionId/'
     | '/(authorized)/(organization)/(sidebar)/create-video/$sessionId/'
+    | '/(authorized)/(organization)/(sidebar)/edit-image/$sessionId/'
     | '/(authorized)/(organization)/(sidebar)/enhance/$sessionId/'
     | '/(authorized)/(organization)/(sidebar)/settings/account/'
     | '/(authorized)/(organization)/(sidebar)/settings/members/'
@@ -465,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authorizedorganizationsidebarCreateVideoPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
+    '/(authorized)/(organization)/(sidebar)/edit-image/': {
+      id: '/(authorized)/(organization)/(sidebar)/edit-image/'
+      path: '/edit-image'
+      fullPath: '/edit-image/'
+      preLoaderRoute: typeof authorizedorganizationsidebarEditImagePageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
     '/(authorized)/(organization)/(sidebar)/enhance/': {
       id: '/(authorized)/(organization)/(sidebar)/enhance/'
       path: '/enhance'
@@ -491,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: '/create-video/$sessionId'
       fullPath: '/create-video/$sessionId/'
       preLoaderRoute: typeof authorizedorganizationsidebarCreateVideoSessionIdPageRouteImport
+      parentRoute: typeof authorizedorganizationsidebarLayoutRoute
+    }
+    '/(authorized)/(organization)/(sidebar)/edit-image/$sessionId/': {
+      id: '/(authorized)/(organization)/(sidebar)/edit-image/$sessionId/'
+      path: '/edit-image/$sessionId'
+      fullPath: '/edit-image/$sessionId/'
+      preLoaderRoute: typeof authorizedorganizationsidebarEditImageSessionIdPageRouteImport
       parentRoute: typeof authorizedorganizationsidebarLayoutRoute
     }
     '/(authorized)/(organization)/(sidebar)/enhance/$sessionId/': {
@@ -564,9 +604,11 @@ interface authorizedorganizationsidebarLayoutRouteChildren {
   authorizedorganizationsidebarSplatPageRoute: typeof authorizedorganizationsidebarSplatPageRoute
   authorizedorganizationsidebarCreateImagePageRoute: typeof authorizedorganizationsidebarCreateImagePageRoute
   authorizedorganizationsidebarCreateVideoPageRoute: typeof authorizedorganizationsidebarCreateVideoPageRoute
+  authorizedorganizationsidebarEditImagePageRoute: typeof authorizedorganizationsidebarEditImagePageRoute
   authorizedorganizationsidebarEnhancePageRoute: typeof authorizedorganizationsidebarEnhancePageRoute
   authorizedorganizationsidebarCreateImageSessionIdPageRoute: typeof authorizedorganizationsidebarCreateImageSessionIdPageRoute
   authorizedorganizationsidebarCreateVideoSessionIdPageRoute: typeof authorizedorganizationsidebarCreateVideoSessionIdPageRoute
+  authorizedorganizationsidebarEditImageSessionIdPageRoute: typeof authorizedorganizationsidebarEditImageSessionIdPageRoute
   authorizedorganizationsidebarEnhanceSessionIdPageRoute: typeof authorizedorganizationsidebarEnhanceSessionIdPageRoute
 }
 
@@ -582,12 +624,16 @@ const authorizedorganizationsidebarLayoutRouteChildren: authorizedorganizationsi
       authorizedorganizationsidebarCreateImagePageRoute,
     authorizedorganizationsidebarCreateVideoPageRoute:
       authorizedorganizationsidebarCreateVideoPageRoute,
+    authorizedorganizationsidebarEditImagePageRoute:
+      authorizedorganizationsidebarEditImagePageRoute,
     authorizedorganizationsidebarEnhancePageRoute:
       authorizedorganizationsidebarEnhancePageRoute,
     authorizedorganizationsidebarCreateImageSessionIdPageRoute:
       authorizedorganizationsidebarCreateImageSessionIdPageRoute,
     authorizedorganizationsidebarCreateVideoSessionIdPageRoute:
       authorizedorganizationsidebarCreateVideoSessionIdPageRoute,
+    authorizedorganizationsidebarEditImageSessionIdPageRoute:
+      authorizedorganizationsidebarEditImageSessionIdPageRoute,
     authorizedorganizationsidebarEnhanceSessionIdPageRoute:
       authorizedorganizationsidebarEnhanceSessionIdPageRoute,
   }

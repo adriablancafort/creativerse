@@ -1,4 +1,5 @@
 import {
+  AiEditingIcon,
   AiImageIcon,
   AiVideoIcon,
   MagicWand01Icon,
@@ -12,6 +13,8 @@ import { formatImageSessionTitle } from "@workspace/shared/api/create-image/mode
 import type { CreateImageSessionListResponse } from "@workspace/shared/api/create-image/types"
 import { formatVideoSessionTitle } from "@workspace/shared/api/create-video/models"
 import type { CreateVideoSessionListResponse } from "@workspace/shared/api/create-video/types"
+import { formatEditImageSessionTitle } from "@workspace/shared/api/edit-image/models"
+import type { EditImageSessionListResponse } from "@workspace/shared/api/edit-image/types"
 import { formatEnhanceSessionTitle } from "@workspace/shared/api/enhance/models"
 import type { EnhanceSessionListResponse } from "@workspace/shared/api/enhance/types"
 import {
@@ -23,7 +26,7 @@ import {
 } from "@workspace/ui/components/sidebar"
 import { api } from "@/lib/api"
 
-type SessionMode = "create-image" | "create-video" | "enhance"
+type SessionMode = "create-image" | "edit-image" | "create-video" | "enhance"
 
 export function NavMain() {
   const matchRoute = useMatchRoute()
@@ -34,12 +37,20 @@ export function NavMain() {
     ? "create-video"
     : pathname.startsWith("/enhance")
       ? "enhance"
-      : "create-image"
+      : pathname.startsWith("/edit-image")
+        ? "edit-image"
+        : "create-image"
   const { data: createImageSessions = [] } = useQuery({
     queryKey: ["create-image-sessions"],
     queryFn: () =>
       api.get<CreateImageSessionListResponse>("/api/create-image/sessions"),
     enabled: mode === "create-image",
+  })
+  const { data: editImageSessions = [] } = useQuery({
+    queryKey: ["edit-image-sessions"],
+    queryFn: () =>
+      api.get<EditImageSessionListResponse>("/api/edit-image/sessions"),
+    enabled: mode === "edit-image",
   })
   const { data: createVideoSessions = [] } = useQuery({
     queryKey: ["create-video-sessions"],
@@ -65,11 +76,17 @@ export function NavMain() {
             title: formatEnhanceSessionTitle(session.title),
             to: "/enhance/$sessionId" as const,
           }))
-        : createImageSessions.map((session) => ({
-            id: session.id,
-            title: formatImageSessionTitle(session.title),
-            to: "/create-image/$sessionId" as const,
-          }))
+        : mode === "edit-image"
+          ? editImageSessions.map((session) => ({
+              id: session.id,
+              title: formatEditImageSessionTitle(session.title),
+              to: "/edit-image/$sessionId" as const,
+            }))
+          : createImageSessions.map((session) => ({
+              id: session.id,
+              title: formatImageSessionTitle(session.title),
+              to: "/create-image/$sessionId" as const,
+            }))
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -86,6 +103,16 @@ export function NavMain() {
             >
               <HugeiconsIcon icon={AiImageIcon} strokeWidth={2} />
               <span>Create Image</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Edit Image"
+              isActive={Boolean(matchRoute({ to: "/edit-image", fuzzy: true }))}
+              render={<Link to="/edit-image" />}
+            >
+              <HugeiconsIcon icon={AiEditingIcon} strokeWidth={2} />
+              <span>Edit Image</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
