@@ -6,17 +6,8 @@ import {
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { useQuery } from "@tanstack/react-query"
-import { Link, useMatchRoute, useRouterState } from "@tanstack/react-router"
+import { Link, useMatchRoute } from "@tanstack/react-router"
 
-import { formatImageSessionTitle } from "@workspace/shared/api/create-image/models"
-import type { CreateImageSessionListResponse } from "@workspace/shared/api/create-image/types"
-import { formatVideoSessionTitle } from "@workspace/shared/api/create-video/models"
-import type { CreateVideoSessionListResponse } from "@workspace/shared/api/create-video/types"
-import { formatEditImageSessionTitle } from "@workspace/shared/api/edit-image/models"
-import type { EditImageSessionListResponse } from "@workspace/shared/api/edit-image/types"
-import { formatEnhanceSessionTitle } from "@workspace/shared/api/enhance/models"
-import type { EnhanceSessionListResponse } from "@workspace/shared/api/enhance/types"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -24,153 +15,55 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@workspace/ui/components/sidebar"
-import { api } from "@/lib/api"
+import { NavSessions } from "@/components/sidebar/nav-sessions"
 
-type SessionMode = "create-image" | "edit-image" | "create-video" | "enhance"
+const toolRoutes = [
+  {
+    title: "Create Image",
+    to: "/create-image",
+    icon: AiImageIcon,
+  },
+  {
+    title: "Edit Image",
+    to: "/edit-image",
+    icon: AiEditingIcon,
+  },
+  {
+    title: "Create Video",
+    to: "/create-video",
+    icon: AiVideoIcon,
+  },
+  {
+    title: "Enhance",
+    to: "/enhance",
+    icon: MagicWand01Icon,
+  },
+]
 
 export function NavMain() {
   const matchRoute = useMatchRoute()
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  })
-  const mode: SessionMode = pathname.startsWith("/create-video")
-    ? "create-video"
-    : pathname.startsWith("/enhance")
-      ? "enhance"
-      : pathname.startsWith("/edit-image")
-        ? "edit-image"
-        : "create-image"
-  const { data: createImageSessions = [] } = useQuery({
-    queryKey: ["create-image-sessions"],
-    queryFn: () =>
-      api.get<CreateImageSessionListResponse>("/api/create-image/sessions"),
-    enabled: mode === "create-image",
-  })
-  const { data: editImageSessions = [] } = useQuery({
-    queryKey: ["edit-image-sessions"],
-    queryFn: () =>
-      api.get<EditImageSessionListResponse>("/api/edit-image/sessions"),
-    enabled: mode === "edit-image",
-  })
-  const { data: createVideoSessions = [] } = useQuery({
-    queryKey: ["create-video-sessions"],
-    queryFn: () =>
-      api.get<CreateVideoSessionListResponse>("/api/create-video/sessions"),
-    enabled: mode === "create-video",
-  })
-  const { data: enhanceSessions = [] } = useQuery({
-    queryKey: ["enhance-sessions"],
-    queryFn: () => api.get<EnhanceSessionListResponse>("/api/enhance/sessions"),
-    enabled: mode === "enhance",
-  })
-  const sessions =
-    mode === "create-video"
-      ? createVideoSessions.map((session) => ({
-          id: session.id,
-          title: formatVideoSessionTitle(session.title),
-          to: "/create-video/$sessionId" as const,
-        }))
-      : mode === "enhance"
-        ? enhanceSessions.map((session) => ({
-            id: session.id,
-            title: formatEnhanceSessionTitle(session.title),
-            to: "/enhance/$sessionId" as const,
-          }))
-        : mode === "edit-image"
-          ? editImageSessions.map((session) => ({
-              id: session.id,
-              title: formatEditImageSessionTitle(session.title),
-              to: "/edit-image/$sessionId" as const,
-            }))
-          : createImageSessions.map((session) => ({
-              id: session.id,
-              title: formatImageSessionTitle(session.title),
-              to: "/create-image/$sessionId" as const,
-            }))
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <SidebarGroup>
         <SidebarGroupLabel>Tools</SidebarGroupLabel>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Create Image"
-              isActive={Boolean(
-                matchRoute({ to: "/create-image", fuzzy: true })
-              )}
-              render={<Link to="/create-image" />}
-            >
-              <HugeiconsIcon icon={AiImageIcon} strokeWidth={2} />
-              <span>Create Image</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Edit Image"
-              isActive={Boolean(matchRoute({ to: "/edit-image", fuzzy: true }))}
-              render={<Link to="/edit-image" />}
-            >
-              <HugeiconsIcon icon={AiEditingIcon} strokeWidth={2} />
-              <span>Edit Image</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Create Video"
-              isActive={Boolean(
-                matchRoute({ to: "/create-video", fuzzy: true })
-              )}
-              render={<Link to="/create-video" />}
-            >
-              <HugeiconsIcon icon={AiVideoIcon} strokeWidth={2} />
-              <span>Create Video</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Enhance"
-              isActive={Boolean(matchRoute({ to: "/enhance", fuzzy: true }))}
-              render={<Link to="/enhance" />}
-            >
-              <HugeiconsIcon icon={MagicWand01Icon} strokeWidth={2} />
-              <span>Enhance</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {toolRoutes.map((tool) => (
+            <SidebarMenuItem key={tool.to}>
+              <SidebarMenuButton
+                tooltip={tool.title}
+                isActive={Boolean(matchRoute({ to: tool.to, fuzzy: true }))}
+                render={<Link to={tool.to} />}
+              >
+                <HugeiconsIcon icon={tool.icon} strokeWidth={2} />
+                <span>{tool.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
       </SidebarGroup>
-      {sessions.length > 0 ? (
-        <SidebarGroup>
-          <SidebarGroupLabel>Sessions</SidebarGroupLabel>
-          <SidebarMenu>
-            {sessions.map((session) => {
-              return (
-                <SidebarMenuItem key={session.id}>
-                  <SidebarMenuButton
-                    size="sm"
-                    tooltip={session.title}
-                    isActive={Boolean(
-                      matchRoute({
-                        to: session.to,
-                        params: { sessionId: session.id },
-                      })
-                    )}
-                    render={
-                      <Link
-                        to={session.to}
-                        params={{ sessionId: session.id }}
-                      />
-                    }
-                  >
-                    <span>{session.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroup>
-      ) : null}
-      <SidebarGroup className="mt-auto">
+      <NavSessions />
+      <SidebarGroup>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
