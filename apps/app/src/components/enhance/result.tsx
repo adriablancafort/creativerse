@@ -1,4 +1,4 @@
-import { Download01Icon } from "@hugeicons/core-free-icons"
+import { AiVideoIcon, Download01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
 import { createPlayer } from "@videojs/react"
@@ -39,6 +39,7 @@ function MakeVideoButton({ url }: { url: string }) {
       size="sm"
       render={<Link to="/create-video" search={{ startFrameUrl: url }} />}
     >
+      <HugeiconsIcon icon={AiVideoIcon} strokeWidth={2} />
       Create video
     </Button>
   )

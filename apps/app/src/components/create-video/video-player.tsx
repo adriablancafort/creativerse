@@ -1,4 +1,4 @@
-import { AiMagicIcon, Download01Icon } from "@hugeicons/core-free-icons"
+import { Download01Icon, MagicWand01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
 import { createPlayer } from "@videojs/react"
@@ -43,7 +43,7 @@ function EnhanceButton({ url }: { url: string }) {
         <Link to="/enhance" search={{ sourceUrl: url, mediaType: "video" }} />
       }
     >
-      <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+      <HugeiconsIcon icon={MagicWand01Icon} strokeWidth={2} />
       Enhance
     </Button>
   )
