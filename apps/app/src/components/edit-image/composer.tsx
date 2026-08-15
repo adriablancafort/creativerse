@@ -277,11 +277,9 @@ export function EditImageComposer({
               {uploading ? (
                 <Spinner />
               ) : (
-                <>
-                  <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
-                  Source
-                </>
+                <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
               )}
+              Source
             </InputGroupButton>
             <Controller
               name="model"

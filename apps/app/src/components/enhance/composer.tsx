@@ -397,6 +397,21 @@ export function EnhanceComposer({
             />
           )}
           <InputGroupAddon align="block-end" className="gap-2.5">
+            <InputGroupButton
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isSubmitting || !canCreate || uploading}
+              aria-label={sourceUrl ? "Replace source" : "Add source"}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {uploading ? (
+                <Spinner />
+              ) : (
+                <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
+              )}
+              Source
+            </InputGroupButton>
             <Controller
               name="model"
               control={form.control}
@@ -781,21 +796,6 @@ export function EnhanceComposer({
                 )}
               />
             ) : null}
-            <InputGroupButton
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={isSubmitting || !canCreate || uploading}
-              aria-label={sourceUrl ? "Replace source" : "Add source"}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {uploading ? (
-                <Spinner />
-              ) : (
-                <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
-              )}
-              Source
-            </InputGroupButton>
             <InputGroupButton
               type="button"
               variant="ghost"
