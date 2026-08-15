@@ -782,7 +782,7 @@ export function EnhanceComposer({
             <InputGroupButton
               type="button"
               variant="outline"
-              size="icon-sm"
+              size="sm"
               disabled={isSubmitting || !canCreate || uploading}
               aria-label={sourceUrl ? "Replace source" : "Add source"}
               onClick={() => fileInputRef.current?.click()}
@@ -792,6 +792,7 @@ export function EnhanceComposer({
               ) : (
                 <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
               )}
+              Source
             </InputGroupButton>
             <InputGroupButton
               type="submit"

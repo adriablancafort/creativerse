@@ -3,6 +3,7 @@ import {
   AiMagicIcon,
   Cancel01Icon,
   ImageAdd01Icon,
+  ImageAdd02Icon,
   Mic01Icon,
   MicOff01Icon,
 } from "@hugeicons/core-free-icons"
@@ -522,7 +523,7 @@ export function VideoComposer({
               <InputGroupButton
                 type="button"
                 variant="outline"
-                size="icon-sm"
+                size="sm"
                 disabled={isSubmitting || !canCreate || uploadingFrame !== null}
                 aria-label={
                   startFrameUrl ? "Replace start frame" : "Add start frame"
@@ -534,6 +535,7 @@ export function VideoComposer({
                 ) : (
                   <HugeiconsIcon icon={ImageAdd01Icon} strokeWidth={2} />
                 )}
+                Start
               </InputGroupButton>
             ) : null}
             {supportsEndFrame && startFrameUrl ? (
@@ -545,7 +547,12 @@ export function VideoComposer({
                 aria-label={endFrameUrl ? "Replace end frame" : "Add end frame"}
                 onClick={() => endInputRef.current?.click()}
               >
-                {uploadingFrame === "end" ? <Spinner /> : "End"}
+                {uploadingFrame === "end" ? (
+                  <Spinner />
+                ) : (
+                  <HugeiconsIcon icon={ImageAdd02Icon} strokeWidth={2} />
+                )}
+                End
               </InputGroupButton>
             ) : null}
             <InputGroupButton
