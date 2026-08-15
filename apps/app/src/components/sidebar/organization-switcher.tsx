@@ -90,7 +90,7 @@ function OrganizationSwitcherContent() {
               />
             }
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+            <div className="flex aspect-square size-8 items-center justify-center rounded-md border">
               <HugeiconsIcon
                 icon={GalleryVerticalEndIcon}
                 strokeWidth={2}
