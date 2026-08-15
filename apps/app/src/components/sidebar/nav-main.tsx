@@ -74,12 +74,13 @@ export function NavMain() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <SidebarGroup>
+        <SidebarGroupLabel>Tools</SidebarGroupLabel>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Create Image"
               isActive={Boolean(
-                matchRoute({ to: "/create-image", fuzzy: false })
+                matchRoute({ to: "/create-image", fuzzy: true })
               )}
               render={<Link to="/create-image" />}
             >
@@ -91,7 +92,7 @@ export function NavMain() {
             <SidebarMenuButton
               tooltip="Create Video"
               isActive={Boolean(
-                matchRoute({ to: "/create-video", fuzzy: false })
+                matchRoute({ to: "/create-video", fuzzy: true })
               )}
               render={<Link to="/create-video" />}
             >
@@ -102,7 +103,7 @@ export function NavMain() {
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Enhance"
-              isActive={Boolean(matchRoute({ to: "/enhance", fuzzy: false }))}
+              isActive={Boolean(matchRoute({ to: "/enhance", fuzzy: true }))}
               render={<Link to="/enhance" />}
             >
               <HugeiconsIcon icon={MagicWand01Icon} strokeWidth={2} />
