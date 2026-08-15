@@ -5,6 +5,7 @@ RUN corepack enable
 
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/worker/package.json ./apps/worker/package.json
+COPY packages/email/package.json ./packages/email/package.json
 
 FROM base AS build-deps
 WORKDIR /app
@@ -20,6 +21,7 @@ FROM build-deps AS build
 WORKDIR /app
 
 COPY apps/worker ./apps/worker
+COPY packages/email ./packages/email
 
 RUN pnpm --filter worker build
 

@@ -1,3 +1,7 @@
+import sendEmail from "@workspace/email/send"
+import ResetPasswordEmail from "@workspace/email/templates/reset-password"
+import { env } from "@/lib/env"
+
 export type SendResetPasswordPayload = {
   to: string
   name: string
@@ -5,6 +9,13 @@ export type SendResetPasswordPayload = {
 }
 
 export async function sendResetPassword(payload: SendResetPasswordPayload) {
-  // TODO: replace with email package sendRecoverPasswordEmail(payload)
-  console.log("send-reset-password", payload)
+  await sendEmail(
+    env.EMAIL_FROM,
+    payload.to,
+    "Reset Password",
+    ResetPasswordEmail({
+      name: payload.name,
+      url: payload.url,
+    })
+  )
 }
