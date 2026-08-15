@@ -149,3 +149,39 @@ export async function uploadCreatedEnhance(options: {
       (options.mediaType === "video" ? "video/mp4" : "image/png"),
   })
 }
+
+export async function uploadEditImageSource(options: {
+  organizationId: string
+  assetId: string
+  body: Buffer
+  contentType: string
+}) {
+  const extension = extensionFromContentType(options.contentType)
+  const filename = `${options.assetId}.${extension}`
+  const key = `${options.organizationId}/uploads/${filename}`
+
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType: options.contentType,
+  })
+}
+
+export async function uploadEditedImage(options: {
+  organizationId: string
+  turnId: string
+  body: Buffer
+  contentType: string
+}) {
+  const extension = extensionFromContentType(options.contentType)
+  const filename = `${options.turnId}.${extension}`
+  const key = `${options.organizationId}/${options.turnId}/${filename}`
+
+  return uploadObject({
+    key,
+    filename,
+    body: options.body,
+    contentType: options.contentType,
+  })
+}
