@@ -19,9 +19,9 @@ type EnhanceTurnProps = {
 
 export function EnhanceTurn({ turn }: EnhanceTurnProps) {
   const model = enhanceModels.find((item) => item.id === turn.model)
+  const prompt = turn.prompt?.trim()
   const label =
-    turn.prompt?.trim() ||
-    (turn.mediaType === "video" ? "Enhanced video" : "Enhanced image")
+    prompt || (turn.mediaType === "video" ? "Enhanced video" : "Enhanced image")
 
   return (
     <MessageScrollerItem messageId={turn.id} scrollAnchor>
@@ -56,11 +56,28 @@ export function EnhanceTurn({ turn }: EnhanceTurnProps) {
                   {formatEnhanceScale(turn.scale)}
                 </Badge>
               ) : null}
+              {turn.targetResolution ? (
+                <Badge variant="secondary">{turn.targetResolution}</Badge>
+              ) : null}
               {turn.topazModel ? (
                 <Badge variant="secondary">{turn.topazModel}</Badge>
               ) : null}
-              {turn.targetResolution ? (
-                <Badge variant="secondary">{turn.targetResolution}</Badge>
+              {turn.targetFps != null ? (
+                <Badge variant="secondary">{turn.targetFps} fps</Badge>
+              ) : null}
+              {turn.creativity != null ? (
+                <Badge variant="secondary">Creativity {turn.creativity}</Badge>
+              ) : null}
+              {turn.detail != null ? (
+                <Badge variant="secondary">Detail {turn.detail}</Badge>
+              ) : null}
+              {turn.shapePreservation != null ? (
+                <Badge variant="secondary">
+                  Shape {turn.shapePreservation}
+                </Badge>
+              ) : null}
+              {turn.noiseScale != null ? (
+                <Badge variant="secondary">Noise {turn.noiseScale}</Badge>
               ) : null}
             </MessageFooter>
           </MessageContent>
