@@ -1,14 +1,13 @@
-import { AiMagicIcon } from "@hugeicons/core-free-icons"
+import { Video01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { z } from "zod"
 
-import { enhanceMediaTypes } from "@workspace/shared/api/enhance/models"
 import type {
-  CreateEnhanceTurnRequest,
-  EnhanceSessionResponse,
-} from "@workspace/shared/api/enhance/types"
+  CreateVideoSessionResponse,
+  CreateVideoTurnRequest,
+} from "@workspace/shared/api/create-video/types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,18 +24,17 @@ import {
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { toast } from "@workspace/ui/components/sonner"
-import { EnhanceComposer } from "@/components/enhance/composer"
+import { CreateVideoComposer } from "@/components/create-video/composer"
 import { api } from "@/lib/api"
 
-const enhanceSearchSchema = z.object({
-  sourceUrl: z.url().optional(),
-  mediaType: z.enum(enhanceMediaTypes).optional(),
+const videoSearchSchema = z.object({
+  startFrameUrl: z.url().optional(),
 })
 
 export const Route = createFileRoute(
-  "/(authorized)/(organization)/(sidebar)/enhance/"
+  "/(authorized)/(organization)/(sidebar)/create-video/"
 )({
-  validateSearch: enhanceSearchSchema,
+  validateSearch: videoSearchSchema,
   component: Page,
 })
 
@@ -51,7 +49,7 @@ function Header() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbPage>Enhance</BreadcrumbPage>
+            <BreadcrumbPage>Create Video</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -60,18 +58,18 @@ function Header() {
 }
 
 function Composer() {
-  const { sourceUrl, mediaType } = Route.useSearch()
+  const { startFrameUrl } = Route.useSearch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const createSessionMutation = useMutation({
-    mutationFn: (values: CreateEnhanceTurnRequest) =>
-      api.post<EnhanceSessionResponse>("/api/enhance/sessions", {
+    mutationFn: (values: CreateVideoTurnRequest) =>
+      api.post<CreateVideoSessionResponse>("/api/create-video/sessions", {
         body: values,
       }),
     onSuccess: (createdSession) => {
-      queryClient.invalidateQueries({ queryKey: ["enhance-sessions"] })
+      queryClient.invalidateQueries({ queryKey: ["create-video-sessions"] })
       navigate({
-        to: "/enhance/$sessionId",
+        to: "/create-video/$sessionId",
         params: { sessionId: createdSession.id },
       })
     },
@@ -81,10 +79,9 @@ function Composer() {
   })
 
   return (
-    <EnhanceComposer
-      key={`${mediaType ?? "image"}:${sourceUrl ?? "new"}`}
-      initialSourceUrl={sourceUrl}
-      initialMediaType={mediaType}
+    <CreateVideoComposer
+      key={startFrameUrl ?? "new"}
+      initialStartFrameUrl={startFrameUrl}
       isSubmitting={createSessionMutation.isPending}
       onSubmit={(values) => createSessionMutation.mutateAsync(values)}
     />
@@ -94,17 +91,17 @@ function Composer() {
 function Page() {
   return (
     <>
-      <title>Enhance</title>
+      <title>Create Video</title>
       <div className="flex min-h-0 flex-1 flex-col">
         <Header />
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+              <HugeiconsIcon icon={Video01Icon} strokeWidth={2} />
             </EmptyMedia>
-            <EmptyTitle>Enhance an image or video</EmptyTitle>
+            <EmptyTitle>Create a new video</EmptyTitle>
             <EmptyDescription>
-              Upscale, sharpen, and restore with creative control
+              Describe a scene, motion, or style
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

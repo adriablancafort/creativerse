@@ -29,6 +29,13 @@
       "when": 1786768803795,
       "tag": "0003_enhance_generation",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1786778594050,
+      "tag": "0004_rename",
+      "breakpoints": true
     }
   ]
 }

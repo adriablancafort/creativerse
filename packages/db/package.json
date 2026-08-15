@@ -15,7 +15,6 @@
     "format": "biome check --write --linter-enabled=false ."
   },
   "exports": {
-    "./schema": "./src/schema/index.ts",
     "./*": "./src/*.ts"
   },
   "dependencies": {

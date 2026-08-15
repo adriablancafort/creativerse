@@ -54,16 +54,16 @@ async function uploadObject(options: {
   return `${env.R2_PUBLIC_URL}/${options.key}`
 }
 
-export async function uploadGeneratedImage(options: {
+export async function uploadCreatedImage(options: {
   organizationId: string
-  generationId: string
+  turnId: string
   imageId: string
   body: Buffer
   contentType: string
 }) {
   const extension = extensionFromContentType(options.contentType)
   const filename = `${options.imageId}.${extension}`
-  const key = `${options.organizationId}/${options.generationId}/${filename}`
+  const key = `${options.organizationId}/${options.turnId}/${filename}`
 
   return uploadObject({
     key,
@@ -73,14 +73,14 @@ export async function uploadGeneratedImage(options: {
   })
 }
 
-export async function uploadGeneratedVideo(options: {
+export async function uploadCreatedVideo(options: {
   organizationId: string
-  generationId: string
+  turnId: string
   body: Buffer
   contentType: string
 }) {
-  const filename = `${options.generationId}.mp4`
-  const key = `${options.organizationId}/${options.generationId}/${filename}`
+  const filename = `${options.turnId}.mp4`
+  const key = `${options.organizationId}/${options.turnId}/${filename}`
 
   return uploadObject({
     key,
@@ -126,9 +126,9 @@ export async function uploadEnhanceSource(options: {
   })
 }
 
-export async function uploadEnhancedMedia(options: {
+export async function uploadCreatedEnhance(options: {
   organizationId: string
-  generationId: string
+  turnId: string
   body: Buffer
   contentType: string
   mediaType: "image" | "video"
@@ -137,8 +137,8 @@ export async function uploadEnhancedMedia(options: {
     options.mediaType === "video"
       ? "mp4"
       : extensionFromContentType(options.contentType)
-  const filename = `${options.generationId}.${extension}`
-  const key = `${options.organizationId}/${options.generationId}/${filename}`
+  const filename = `${options.turnId}.${extension}`
+  const key = `${options.organizationId}/${options.turnId}/${filename}`
 
   return uploadObject({
     key,

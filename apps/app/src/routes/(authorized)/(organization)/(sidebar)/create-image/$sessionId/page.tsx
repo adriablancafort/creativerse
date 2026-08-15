@@ -6,13 +6,13 @@ import {
 } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { formatEnhanceSessionTitle } from "@workspace/shared/api/enhance/models"
+import { formatImageSessionTitle } from "@workspace/shared/api/create-image/models"
 import type {
-  CreatedEnhance,
-  CreatedEnhanceResponse,
-  CreateEnhanceTurnRequest,
-  EnhanceSessionResponse,
-} from "@workspace/shared/api/enhance/types"
+  CreateImageSessionResponse,
+  CreateImageTurn,
+  CreateImageTurnRequest,
+  CreateImageTurnResponse,
+} from "@workspace/shared/api/create-image/types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,19 +29,23 @@ import {
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { toast } from "@workspace/ui/components/sonner"
-import { EnhanceComposer } from "@/components/enhance/composer"
-import { EnhanceTurn } from "@/components/enhance/turn"
+import { CreateImageComposer } from "@/components/create-image/composer"
+import { CreateImageTurn as CreateImageTurnView } from "@/components/create-image/turn"
 import { api } from "@/lib/api"
 
-function hasPendingTurns(turns: CreatedEnhance[]) {
-  return turns.some((turn) => turn.status === "pending")
+function hasPendingTurns(turns: CreateImageTurn[]) {
+  return turns.some((turn) =>
+    turn.images.some((image) => image.status === "pending")
+  )
 }
 
-function enhanceSessionQueryOptions(sessionId: string) {
+function createImageSessionQueryOptions(sessionId: string) {
   return queryOptions({
-    queryKey: ["enhance-session", sessionId],
+    queryKey: ["create-image-session", sessionId],
     queryFn: () =>
-      api.get<EnhanceSessionResponse>(`/api/enhance/sessions/${sessionId}`),
+      api.get<CreateImageSessionResponse>(
+        `/api/create-image/sessions/${sessionId}`
+      ),
     refetchInterval: (query) => {
       const session = query.state.data
 
@@ -49,13 +53,13 @@ function enhanceSessionQueryOptions(sessionId: string) {
         return false
       }
 
-      return 2000
+      return 1000
     },
   })
 }
 
 export const Route = createFileRoute(
-  "/(authorized)/(organization)/(sidebar)/enhance/$sessionId/"
+  "/(authorized)/(organization)/(sidebar)/create-image/$sessionId/"
 )({
   component: Page,
 })
@@ -88,16 +92,16 @@ function Composer({
 }) {
   const queryClient = useQueryClient()
   const addTurnMutation = useMutation({
-    mutationFn: (values: CreateEnhanceTurnRequest) =>
-      api.post<CreatedEnhanceResponse>(
-        `/api/enhance/sessions/${sessionId}/turns`,
+    mutationFn: (values: CreateImageTurnRequest) =>
+      api.post<CreateImageTurnResponse>(
+        `/api/create-image/sessions/${sessionId}/turns`,
         { body: values }
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["enhance-session", sessionId],
+        queryKey: ["create-image-session", sessionId],
       })
-      queryClient.invalidateQueries({ queryKey: ["enhance-sessions"] })
+      queryClient.invalidateQueries({ queryKey: ["create-image-sessions"] })
     },
     onError: (error) => {
       toast.error(error.message)
@@ -105,7 +109,7 @@ function Composer({
   })
 
   return (
-    <EnhanceComposer
+    <CreateImageComposer
       pending={pending}
       isSubmitting={addTurnMutation.isPending}
       onSubmit={(values) => addTurnMutation.mutateAsync(values)}
@@ -116,9 +120,9 @@ function Composer({
 function Page() {
   const { sessionId } = Route.useParams()
   const { data: session } = useSuspenseQuery(
-    enhanceSessionQueryOptions(sessionId)
+    createImageSessionQueryOptions(sessionId)
   )
-  const title = formatEnhanceSessionTitle(session.title)
+  const title = formatImageSessionTitle(session.title)
   const isBusy = hasPendingTurns(session.turns)
 
   return (
@@ -138,7 +142,7 @@ function Page() {
                   className="mx-auto w-full max-w-7xl px-6 pt-6 pb-44"
                 >
                   {session.turns.map((turn) => (
-                    <EnhanceTurn key={turn.id} turn={turn} />
+                    <CreateImageTurnView key={turn.id} turn={turn} />
                   ))}
                 </MessageScrollerContent>
               </MessageScrollerViewport>

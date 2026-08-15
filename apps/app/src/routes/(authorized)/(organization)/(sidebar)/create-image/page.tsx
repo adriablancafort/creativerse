@@ -1,14 +1,12 @@
-import { AiMagicIcon } from "@hugeicons/core-free-icons"
+import { Image01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { z } from "zod"
 
-import { enhanceMediaTypes } from "@workspace/shared/api/enhance/models"
 import type {
-  CreateEnhanceTurnRequest,
-  EnhanceSessionResponse,
-} from "@workspace/shared/api/enhance/types"
+  CreateImageSessionResponse,
+  CreateImageTurnRequest,
+} from "@workspace/shared/api/create-image/types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -25,18 +23,12 @@ import {
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { toast } from "@workspace/ui/components/sonner"
-import { EnhanceComposer } from "@/components/enhance/composer"
+import { CreateImageComposer } from "@/components/create-image/composer"
 import { api } from "@/lib/api"
 
-const enhanceSearchSchema = z.object({
-  sourceUrl: z.url().optional(),
-  mediaType: z.enum(enhanceMediaTypes).optional(),
-})
-
 export const Route = createFileRoute(
-  "/(authorized)/(organization)/(sidebar)/enhance/"
+  "/(authorized)/(organization)/(sidebar)/create-image/"
 )({
-  validateSearch: enhanceSearchSchema,
   component: Page,
 })
 
@@ -51,7 +43,7 @@ function Header() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbPage>Enhance</BreadcrumbPage>
+            <BreadcrumbPage>Create Image</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -60,18 +52,17 @@ function Header() {
 }
 
 function Composer() {
-  const { sourceUrl, mediaType } = Route.useSearch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const createSessionMutation = useMutation({
-    mutationFn: (values: CreateEnhanceTurnRequest) =>
-      api.post<EnhanceSessionResponse>("/api/enhance/sessions", {
+    mutationFn: (values: CreateImageTurnRequest) =>
+      api.post<CreateImageSessionResponse>("/api/create-image/sessions", {
         body: values,
       }),
     onSuccess: (createdSession) => {
-      queryClient.invalidateQueries({ queryKey: ["enhance-sessions"] })
+      queryClient.invalidateQueries({ queryKey: ["create-image-sessions"] })
       navigate({
-        to: "/enhance/$sessionId",
+        to: "/create-image/$sessionId",
         params: { sessionId: createdSession.id },
       })
     },
@@ -81,10 +72,7 @@ function Composer() {
   })
 
   return (
-    <EnhanceComposer
-      key={`${mediaType ?? "image"}:${sourceUrl ?? "new"}`}
-      initialSourceUrl={sourceUrl}
-      initialMediaType={mediaType}
+    <CreateImageComposer
       isSubmitting={createSessionMutation.isPending}
       onSubmit={(values) => createSessionMutation.mutateAsync(values)}
     />
@@ -94,17 +82,17 @@ function Composer() {
 function Page() {
   return (
     <>
-      <title>Enhance</title>
+      <title>Create Image</title>
       <div className="flex min-h-0 flex-1 flex-col">
         <Header />
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+              <HugeiconsIcon icon={Image01Icon} strokeWidth={2} />
             </EmptyMedia>
-            <EmptyTitle>Enhance an image or video</EmptyTitle>
+            <EmptyTitle>Create a new image</EmptyTitle>
             <EmptyDescription>
-              Upscale, sharpen, and restore with creative control
+              Describe a subject, mood, or style
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

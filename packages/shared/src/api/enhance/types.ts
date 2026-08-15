@@ -1,8 +1,8 @@
 import type { z } from "zod"
 
-import type { createEnhanceGenerationRequestSchema } from "./schemas"
+import type { createEnhanceTurnRequestSchema } from "./schemas"
 
-export type EnhanceGeneration = {
+export type CreatedEnhance = {
   id: string
   sessionId: string
   mediaType: string
@@ -32,17 +32,17 @@ export type EnhanceSession = {
   title: string
   createdAt: Date
   updatedAt: Date
-  generations: EnhanceGeneration[]
+  turns: CreatedEnhance[]
 }
 
-export type EnhanceGenerationResponse = EnhanceGeneration
-export type EnhanceSessionListResponse = Omit<EnhanceSession, "generations">[]
+export type CreatedEnhanceResponse = CreatedEnhance
+export type EnhanceSessionListResponse = Omit<EnhanceSession, "turns">[]
 export type EnhanceSessionResponse = EnhanceSession
 export type EnhanceUploadResponse = {
   url: string
   mediaType: "image" | "video"
 }
-export type CreateEnhanceGenerationRequest = z.infer<
-  typeof createEnhanceGenerationRequestSchema
+export type CreateEnhanceTurnRequest = z.infer<
+  typeof createEnhanceTurnRequestSchema
 >
-export type CreateEnhanceSessionRequest = CreateEnhanceGenerationRequest
+export type CreateEnhanceSessionRequest = CreateEnhanceTurnRequest

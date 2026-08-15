@@ -38,7 +38,7 @@ export const enhanceTargetResolutionSchema = z.enum(enhanceTargetResolutions)
 
 export const enhanceTopazModelSchema = z.enum(enhanceTopazModels)
 
-export const createEnhanceGenerationRequestSchema = z
+export const createEnhanceTurnRequestSchema = z
   .object({
     mediaType: enhanceMediaTypeSchema,
     sourceUrl: sourceUrlSchema,
@@ -251,8 +251,7 @@ export const createEnhanceGenerationRequestSchema = z
     }
   })
 
-export const createEnhanceSessionRequestSchema =
-  createEnhanceGenerationRequestSchema
+export const createEnhanceSessionRequestSchema = createEnhanceTurnRequestSchema
 
 export const enhanceSessionIdParamsSchema = z.object({
   id: z.string().min(1, "Session id is required"),

@@ -2,16 +2,16 @@ import { and, asc, desc, eq } from "drizzle-orm"
 import { Hono } from "hono"
 
 import { db } from "@workspace/db/client"
-import { enhanceGeneration, enhanceSession } from "@workspace/db/schema/enhance"
+import { createdEnhance, enhanceSession } from "@workspace/db/schema/enhance"
 import { enhanceSessionTitleFromSource } from "@workspace/shared/api/enhance/models"
 import {
-  createEnhanceGenerationRequestSchema,
   createEnhanceSessionRequestSchema,
+  createEnhanceTurnRequestSchema,
   enhanceSessionIdParamsSchema,
 } from "@workspace/shared/api/enhance/schemas"
 import type {
-  CreateEnhanceGenerationRequest,
-  EnhanceGenerationResponse,
+  CreatedEnhanceResponse,
+  CreateEnhanceTurnRequest,
   EnhanceSessionListResponse,
   EnhanceSessionResponse,
   EnhanceUploadResponse,
@@ -19,7 +19,7 @@ import type {
 import { requireOrganization } from "@/lib/auth/organization"
 import { requirePermission } from "@/lib/auth/permissions"
 import { generateFalEnhance } from "@/lib/enhance/fal"
-import { uploadEnhancedMedia, uploadEnhanceSource } from "@/lib/storage"
+import { uploadCreatedEnhance, uploadEnhanceSource } from "@/lib/storage"
 import { validator } from "@/lib/validator"
 
 const maxImageUploadBytes = 20 * 1024 * 1024
@@ -93,20 +93,20 @@ enhanceRoutes.post(
         return c.json({ error: "Failed to create enhance session" }, 500)
       }
 
-      const generation = await insertGeneration(sessionId, payload, now)
+      const turn = await insertTurn(sessionId, payload, now)
 
-      if (!generation) {
-        return c.json({ error: "Failed to create enhance generation" }, 500)
+      if (!turn) {
+        return c.json({ error: "Failed to create enhance turn" }, 500)
       }
 
-      runGeneration(generation.id, organizationId).catch((error) => {
-        console.error("Enhance generation failed", error)
+      runTurn(turn.id, organizationId).catch((error) => {
+        console.error("Enhance turn failed", error)
       })
 
       return c.json(
         {
           ...session,
-          generations: [generation],
+          turns: [turn],
         } satisfies EnhanceSessionResponse,
         201
       )
@@ -172,11 +172,11 @@ enhanceRoutes.delete(
 )
 
 enhanceRoutes.post(
-  "/sessions/:id/generations",
+  "/sessions/:id/turns",
   requireOrganization,
   requirePermission({ enhance: ["create"] }),
   validator("param", enhanceSessionIdParamsSchema),
-  validator("json", createEnhanceGenerationRequestSchema),
+  validator("json", createEnhanceTurnRequestSchema),
   async (c) => {
     const organizationId = c.get("organizationId")
     const { id } = c.req.valid("param")
@@ -190,10 +190,10 @@ enhanceRoutes.post(
 
       const payload = c.req.valid("json")
       const now = new Date()
-      const generation = await insertGeneration(id, payload, now)
+      const turn = await insertTurn(id, payload, now)
 
-      if (!generation) {
-        return c.json({ error: "Failed to create enhance generation" }, 500)
+      if (!turn) {
+        return c.json({ error: "Failed to create enhance turn" }, 500)
       }
 
       await db
@@ -201,13 +201,13 @@ enhanceRoutes.post(
         .set({ updatedAt: now })
         .where(eq(enhanceSession.id, id))
 
-      runGeneration(generation.id, organizationId).catch((error) => {
-        console.error("Enhance generation failed", error)
+      runTurn(turn.id, organizationId).catch((error) => {
+        console.error("Enhance turn failed", error)
       })
 
-      return c.json(generation satisfies EnhanceGenerationResponse, 201)
+      return c.json(turn satisfies CreatedEnhanceResponse, 201)
     } catch {
-      return c.json({ error: "Failed to create enhance generation" }, 500)
+      return c.json({ error: "Failed to create enhance turn" }, 500)
     }
   }
 )
@@ -273,13 +273,13 @@ enhanceRoutes.post(
   }
 )
 
-async function insertGeneration(
+async function insertTurn(
   sessionId: string,
-  payload: CreateEnhanceGenerationRequest,
+  payload: CreateEnhanceTurnRequest,
   createdAt: Date
 ) {
-  const [generation] = await db
-    .insert(enhanceGeneration)
+  const [turn] = await db
+    .insert(createdEnhance)
     .values({
       id: crypto.randomUUID(),
       sessionId,
@@ -301,7 +301,7 @@ async function insertGeneration(
     })
     .returning()
 
-  return generation ?? null
+  return turn ?? null
 }
 
 async function findOrganizationSession(organizationId: string, id: string) {
@@ -318,12 +318,12 @@ async function findOrganizationSession(organizationId: string, id: string) {
   return session ?? null
 }
 
-async function loadSessionGenerations(sessionId: string) {
+async function loadSessionTurns(sessionId: string) {
   return db
     .select()
-    .from(enhanceGeneration)
-    .where(eq(enhanceGeneration.sessionId, sessionId))
-    .orderBy(asc(enhanceGeneration.createdAt))
+    .from(createdEnhance)
+    .where(eq(createdEnhance.sessionId, sessionId))
+    .orderBy(asc(createdEnhance.createdAt))
 }
 
 async function loadOrganizationSession(organizationId: string, id: string) {
@@ -335,68 +335,67 @@ async function loadOrganizationSession(organizationId: string, id: string) {
 
   return {
     ...session,
-    generations: await loadSessionGenerations(session.id),
+    turns: await loadSessionTurns(session.id),
   }
 }
 
-async function runGeneration(generationId: string, organizationId: string) {
-  const [generation] = await db
+async function runTurn(turnId: string, organizationId: string) {
+  const [turn] = await db
     .select()
-    .from(enhanceGeneration)
-    .where(eq(enhanceGeneration.id, generationId))
+    .from(createdEnhance)
+    .where(eq(createdEnhance.id, turnId))
 
-  if (!generation) {
+  if (!turn) {
     return
   }
 
   try {
     const mediaType =
-      generation.mediaType === "video" ? ("video" as const) : ("image" as const)
+      turn.mediaType === "video" ? ("video" as const) : ("image" as const)
     const generated = await generateFalEnhance({
-      modelId: generation.model,
+      modelId: turn.model,
       mediaType,
-      sourceUrl: generation.sourceUrl,
-      prompt: generation.prompt,
-      scale: generation.scale,
-      creativity: generation.creativity,
-      detail: generation.detail,
-      shapePreservation: generation.shapePreservation,
-      upscaleMode: generation.upscaleMode,
-      targetResolution: generation.targetResolution,
-      noiseScale: generation.noiseScale,
-      topazModel: generation.topazModel,
-      targetFps: generation.targetFps,
+      sourceUrl: turn.sourceUrl,
+      prompt: turn.prompt,
+      scale: turn.scale,
+      creativity: turn.creativity,
+      detail: turn.detail,
+      shapePreservation: turn.shapePreservation,
+      upscaleMode: turn.upscaleMode,
+      targetResolution: turn.targetResolution,
+      noiseScale: turn.noiseScale,
+      topazModel: turn.topazModel,
+      targetFps: turn.targetFps,
     })
-    const url = await uploadEnhancedMedia({
+    const url = await uploadCreatedEnhance({
       organizationId,
-      generationId: generation.id,
+      turnId: turn.id,
       body: generated.body,
       contentType: generated.contentType,
       mediaType: generated.mediaType,
     })
 
     await db
-      .update(enhanceGeneration)
+      .update(createdEnhance)
       .set({
         status: "completed",
         url,
         error: null,
         falRequestId: generated.requestId,
       })
-      .where(eq(enhanceGeneration.id, generation.id))
+      .where(eq(createdEnhance.id, turn.id))
   } catch (error) {
     await db
-      .update(enhanceGeneration)
+      .update(createdEnhance)
       .set({
         status: "failed",
-        error:
-          error instanceof Error ? error.message : "Enhance generation failed",
+        error: error instanceof Error ? error.message : "Enhance turn failed",
       })
-      .where(eq(enhanceGeneration.id, generation.id))
+      .where(eq(createdEnhance.id, turn.id))
   }
 
   await db
     .update(enhanceSession)
     .set({ updatedAt: new Date() })
-    .where(eq(enhanceSession.id, generation.sessionId))
+    .where(eq(enhanceSession.id, turn.sessionId))
 }

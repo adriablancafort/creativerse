@@ -8,12 +8,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "@tanstack/react-query"
 import { Link, useMatchRoute, useRouterState } from "@tanstack/react-router"
 
+import { formatImageSessionTitle } from "@workspace/shared/api/create-image/models"
+import type { CreateImageSessionListResponse } from "@workspace/shared/api/create-image/types"
+import { formatVideoSessionTitle } from "@workspace/shared/api/create-video/models"
+import type { CreateVideoSessionListResponse } from "@workspace/shared/api/create-video/types"
 import { formatEnhanceSessionTitle } from "@workspace/shared/api/enhance/models"
 import type { EnhanceSessionListResponse } from "@workspace/shared/api/enhance/types"
-import { formatImageSessionTitle } from "@workspace/shared/api/image/models"
-import type { ImageSessionListResponse } from "@workspace/shared/api/image/types"
-import { formatVideoSessionTitle } from "@workspace/shared/api/video/models"
-import type { VideoSessionListResponse } from "@workspace/shared/api/video/types"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -23,27 +23,29 @@ import {
 } from "@workspace/ui/components/sidebar"
 import { api } from "@/lib/api"
 
-type SessionMode = "image" | "video" | "enhance"
+type SessionMode = "create-image" | "create-video" | "enhance"
 
 export function NavMain() {
   const matchRoute = useMatchRoute()
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   })
-  const mode: SessionMode = pathname.startsWith("/video")
-    ? "video"
+  const mode: SessionMode = pathname.startsWith("/create-video")
+    ? "create-video"
     : pathname.startsWith("/enhance")
       ? "enhance"
-      : "image"
-  const { data: imageSessions = [] } = useQuery({
-    queryKey: ["image-sessions"],
-    queryFn: () => api.get<ImageSessionListResponse>("/api/image/sessions"),
-    enabled: mode === "image",
+      : "create-image"
+  const { data: createImageSessions = [] } = useQuery({
+    queryKey: ["create-image-sessions"],
+    queryFn: () =>
+      api.get<CreateImageSessionListResponse>("/api/create-image/sessions"),
+    enabled: mode === "create-image",
   })
-  const { data: videoSessions = [] } = useQuery({
-    queryKey: ["video-sessions"],
-    queryFn: () => api.get<VideoSessionListResponse>("/api/video/sessions"),
-    enabled: mode === "video",
+  const { data: createVideoSessions = [] } = useQuery({
+    queryKey: ["create-video-sessions"],
+    queryFn: () =>
+      api.get<CreateVideoSessionListResponse>("/api/create-video/sessions"),
+    enabled: mode === "create-video",
   })
   const { data: enhanceSessions = [] } = useQuery({
     queryKey: ["enhance-sessions"],
@@ -51,11 +53,11 @@ export function NavMain() {
     enabled: mode === "enhance",
   })
   const sessions =
-    mode === "video"
-      ? videoSessions.map((session) => ({
+    mode === "create-video"
+      ? createVideoSessions.map((session) => ({
           id: session.id,
           title: formatVideoSessionTitle(session.title),
-          to: "/video/$sessionId" as const,
+          to: "/create-video/$sessionId" as const,
         }))
       : mode === "enhance"
         ? enhanceSessions.map((session) => ({
@@ -63,10 +65,10 @@ export function NavMain() {
             title: formatEnhanceSessionTitle(session.title),
             to: "/enhance/$sessionId" as const,
           }))
-        : imageSessions.map((session) => ({
+        : createImageSessions.map((session) => ({
             id: session.id,
             title: formatImageSessionTitle(session.title),
-            to: "/image/$sessionId" as const,
+            to: "/create-image/$sessionId" as const,
           }))
 
   return (
@@ -76,8 +78,10 @@ export function NavMain() {
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Create Image"
-              isActive={Boolean(matchRoute({ to: "/image", fuzzy: false }))}
-              render={<Link to="/image" />}
+              isActive={Boolean(
+                matchRoute({ to: "/create-image", fuzzy: false })
+              )}
+              render={<Link to="/create-image" />}
             >
               <HugeiconsIcon icon={AiImageIcon} strokeWidth={2} />
               <span>Create Image</span>
@@ -86,8 +90,10 @@ export function NavMain() {
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Create Video"
-              isActive={Boolean(matchRoute({ to: "/video", fuzzy: false }))}
-              render={<Link to="/video" />}
+              isActive={Boolean(
+                matchRoute({ to: "/create-video", fuzzy: false })
+              )}
+              render={<Link to="/create-video" />}
             >
               <HugeiconsIcon icon={AiVideoIcon} strokeWidth={2} />
               <span>Create Video</span>

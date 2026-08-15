@@ -6,13 +6,13 @@ import {
 } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 
-import { formatEnhanceSessionTitle } from "@workspace/shared/api/enhance/models"
+import { formatVideoSessionTitle } from "@workspace/shared/api/create-video/models"
 import type {
-  CreatedEnhance,
-  CreatedEnhanceResponse,
-  CreateEnhanceTurnRequest,
-  EnhanceSessionResponse,
-} from "@workspace/shared/api/enhance/types"
+  CreatedVideo,
+  CreatedVideoResponse,
+  CreateVideoSessionResponse,
+  CreateVideoTurnRequest,
+} from "@workspace/shared/api/create-video/types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,19 +29,21 @@ import {
 import { Separator } from "@workspace/ui/components/separator"
 import { SidebarTrigger } from "@workspace/ui/components/sidebar"
 import { toast } from "@workspace/ui/components/sonner"
-import { EnhanceComposer } from "@/components/enhance/composer"
-import { EnhanceTurn } from "@/components/enhance/turn"
+import { CreateVideoComposer } from "@/components/create-video/composer"
+import { CreateVideoTurn } from "@/components/create-video/turn"
 import { api } from "@/lib/api"
 
-function hasPendingTurns(turns: CreatedEnhance[]) {
+function hasPendingTurns(turns: CreatedVideo[]) {
   return turns.some((turn) => turn.status === "pending")
 }
 
-function enhanceSessionQueryOptions(sessionId: string) {
+function createVideoSessionQueryOptions(sessionId: string) {
   return queryOptions({
-    queryKey: ["enhance-session", sessionId],
+    queryKey: ["create-video-session", sessionId],
     queryFn: () =>
-      api.get<EnhanceSessionResponse>(`/api/enhance/sessions/${sessionId}`),
+      api.get<CreateVideoSessionResponse>(
+        `/api/create-video/sessions/${sessionId}`
+      ),
     refetchInterval: (query) => {
       const session = query.state.data
 
@@ -55,7 +57,7 @@ function enhanceSessionQueryOptions(sessionId: string) {
 }
 
 export const Route = createFileRoute(
-  "/(authorized)/(organization)/(sidebar)/enhance/$sessionId/"
+  "/(authorized)/(organization)/(sidebar)/create-video/$sessionId/"
 )({
   component: Page,
 })
@@ -88,16 +90,16 @@ function Composer({
 }) {
   const queryClient = useQueryClient()
   const addTurnMutation = useMutation({
-    mutationFn: (values: CreateEnhanceTurnRequest) =>
-      api.post<CreatedEnhanceResponse>(
-        `/api/enhance/sessions/${sessionId}/turns`,
+    mutationFn: (values: CreateVideoTurnRequest) =>
+      api.post<CreatedVideoResponse>(
+        `/api/create-video/sessions/${sessionId}/turns`,
         { body: values }
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["enhance-session", sessionId],
+        queryKey: ["create-video-session", sessionId],
       })
-      queryClient.invalidateQueries({ queryKey: ["enhance-sessions"] })
+      queryClient.invalidateQueries({ queryKey: ["create-video-sessions"] })
     },
     onError: (error) => {
       toast.error(error.message)
@@ -105,7 +107,7 @@ function Composer({
   })
 
   return (
-    <EnhanceComposer
+    <CreateVideoComposer
       pending={pending}
       isSubmitting={addTurnMutation.isPending}
       onSubmit={(values) => addTurnMutation.mutateAsync(values)}
@@ -116,9 +118,9 @@ function Composer({
 function Page() {
   const { sessionId } = Route.useParams()
   const { data: session } = useSuspenseQuery(
-    enhanceSessionQueryOptions(sessionId)
+    createVideoSessionQueryOptions(sessionId)
   )
-  const title = formatEnhanceSessionTitle(session.title)
+  const title = formatVideoSessionTitle(session.title)
   const isBusy = hasPendingTurns(session.turns)
 
   return (
@@ -138,7 +140,7 @@ function Page() {
                   className="mx-auto w-full max-w-7xl px-6 pt-6 pb-44"
                 >
                   {session.turns.map((turn) => (
-                    <EnhanceTurn key={turn.id} turn={turn} />
+                    <CreateVideoTurn key={turn.id} turn={turn} />
                   ))}
                 </MessageScrollerContent>
               </MessageScrollerViewport>

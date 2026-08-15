@@ -32,8 +32,8 @@ export const enhanceSession = pgTable(
   ]
 )
 
-export const enhanceGeneration = pgTable(
-  "enhance_generation",
+export const createdEnhance = pgTable(
+  "created_enhance",
   {
     id: text("id").primaryKey(),
     sessionId: text("session_id")
@@ -59,10 +59,10 @@ export const enhanceGeneration = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
-    index("enhance_generation_sessionId_idx").on(table.sessionId),
-    index("enhance_generation_createdAt_idx").on(table.createdAt),
+    index("created_enhance_sessionId_idx").on(table.sessionId),
+    index("created_enhance_createdAt_idx").on(table.createdAt),
   ]
 )
 
 export type EnhanceSession = typeof enhanceSession.$inferSelect
-export type EnhanceGeneration = typeof enhanceGeneration.$inferSelect
+export type CreatedEnhance = typeof createdEnhance.$inferSelect

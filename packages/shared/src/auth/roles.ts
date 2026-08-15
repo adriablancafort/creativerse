@@ -8,8 +8,8 @@ import {
 
 export const statement = {
   ...defaultStatements,
-  image: ["create", "read", "update", "delete"],
-  video: ["create", "read", "update", "delete"],
+  createImage: ["create", "read", "update", "delete"],
+  createVideo: ["create", "read", "update", "delete"],
   enhance: ["create", "read", "update", "delete"],
 }
 
@@ -17,22 +17,22 @@ export const ac = createAccessControl(statement)
 
 export const owner = ac.newRole({
   ...ownerAc.statements,
-  image: ["create", "read", "update", "delete"],
-  video: ["create", "read", "update", "delete"],
+  createImage: ["create", "read", "update", "delete"],
+  createVideo: ["create", "read", "update", "delete"],
   enhance: ["create", "read", "update", "delete"],
 })
 
 export const admin = ac.newRole({
   ...adminAc.statements,
-  image: ["create", "read", "update", "delete"],
-  video: ["create", "read", "update", "delete"],
+  createImage: ["create", "read", "update", "delete"],
+  createVideo: ["create", "read", "update", "delete"],
   enhance: ["create", "read", "update", "delete"],
 })
 
 export const member = ac.newRole({
   ...memberAc.statements,
-  image: ["read"],
-  video: ["read"],
+  createImage: ["read"],
+  createVideo: ["read"],
   enhance: ["read"],
 })
 
