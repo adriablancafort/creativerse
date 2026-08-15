@@ -23,12 +23,14 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
 import { PasswordInput } from "@workspace/ui/components/password-input"
 import { toast } from "@workspace/ui/components/sonner"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { getLastUsedLoginMethod, signIn } from "@/lib/auth/client"
+import { env } from "@/lib/env"
 
 export const Route = createFileRoute("/(unauthorized)/signin/")({
   component: Page,
@@ -83,6 +85,20 @@ function Page() {
       toast.error(error.message)
     },
   })
+
+  async function handleGoogleSignIn() {
+    await signIn.social(
+      {
+        provider: "google",
+        callbackURL: env.FRONTEND_URL,
+      },
+      {
+        onError: (ctx) => {
+          toast.error(ctx.error.message)
+        },
+      }
+    )
+  }
 
   return (
     <>
@@ -160,6 +176,31 @@ function Page() {
                 >
                   {signInMutation.isPending ? <Spinner /> : "Sign in"}
                   {lastLoginMethod === "email" && (
+                    <Badge
+                      variant="secondary"
+                      className="absolute -top-2 right-2"
+                    >
+                      Last used
+                    </Badge>
+                  )}
+                </Button>
+
+                <FieldSeparator>Or continue with</FieldSeparator>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={signInMutation.isPending}
+                  onClick={handleGoogleSignIn}
+                  className="relative"
+                >
+                  <img
+                    src="/logos/google.svg"
+                    alt="Google logo"
+                    className="size-5"
+                  />
+                  Sign in with Google
+                  {lastLoginMethod === "google" && (
                     <Badge
                       variant="secondary"
                       className="absolute -top-2 right-2"

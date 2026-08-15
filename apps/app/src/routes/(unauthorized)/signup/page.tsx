@@ -22,12 +22,14 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldSeparator,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
 import { PasswordInput } from "@workspace/ui/components/password-input"
 import { toast } from "@workspace/ui/components/sonner"
 import { Spinner } from "@workspace/ui/components/spinner"
-import { signUp } from "@/lib/auth/client"
+import { signIn, signUp } from "@/lib/auth/client"
+import { env } from "@/lib/env"
 
 export const Route = createFileRoute("/(unauthorized)/signup/")({
   component: Page,
@@ -97,6 +99,20 @@ function Page() {
       toast.error(error.message)
     },
   })
+
+  async function handleGoogleSignUp() {
+    await signIn.social(
+      {
+        provider: "google",
+        callbackURL: env.FRONTEND_URL,
+      },
+      {
+        onError: (ctx) => {
+          toast.error(ctx.error.message)
+        },
+      }
+    )
+  }
 
   return (
     <>
@@ -204,6 +220,22 @@ function Page() {
 
                 <Button type="submit" disabled={signUpMutation.isPending}>
                   {signUpMutation.isPending ? <Spinner /> : "Sign up"}
+                </Button>
+
+                <FieldSeparator>Or continue with</FieldSeparator>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={signUpMutation.isPending}
+                  onClick={handleGoogleSignUp}
+                >
+                  <img
+                    src="/logos/google.svg"
+                    alt="Google logo"
+                    className="size-5"
+                  />
+                  Sign up with Google
                 </Button>
 
                 <div className="text-center text-sm">
