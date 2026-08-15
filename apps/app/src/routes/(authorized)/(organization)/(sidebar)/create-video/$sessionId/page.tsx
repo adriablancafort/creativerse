@@ -148,7 +148,7 @@ function Page() {
             </MessageScroller>
           </MessageScrollerProvider>
           <div className="pointer-events-none absolute inset-x-0 bottom-0">
-            <Composer sessionId={sessionId} pending={isBusy} />
+            <Composer key={sessionId} sessionId={sessionId} pending={isBusy} />
           </div>
         </div>
       </div>

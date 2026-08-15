@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {
   AiMagicIcon,
   Cancel01Icon,
+  EraserIcon,
   ImageAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -280,6 +281,7 @@ export function EnhanceComposer({
       ...values,
       prompt: values.prompt?.trim() ? values.prompt.trim() : null,
     })
+    form.reset(defaultValuesForMedia("image", null))
   }
 
   return (
@@ -795,11 +797,21 @@ export function EnhanceComposer({
               Source
             </InputGroupButton>
             <InputGroupButton
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="ml-auto"
+              disabled={isSubmitting || !canCreate}
+              aria-label="Clear"
+              onClick={() => form.reset(defaultValuesForMedia("image", null))}
+            >
+              <HugeiconsIcon icon={EraserIcon} strokeWidth={2} />
+            </InputGroupButton>
+            <InputGroupButton
               type="submit"
               variant="default"
               size="icon-lg"
               disabled={!canSubmit}
-              className="ml-auto"
               aria-label="Enhance"
             >
               {isSubmitting ? (

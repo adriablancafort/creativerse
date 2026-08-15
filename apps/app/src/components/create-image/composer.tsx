@@ -1,5 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { AiMagicIcon, Image01Icon } from "@hugeicons/core-free-icons"
+import {
+  AiMagicIcon,
+  EraserIcon,
+  Image01Icon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BorderBeam } from "border-beam"
 import { Controller, useForm } from "react-hook-form"
@@ -48,6 +52,15 @@ function AspectRatioGlyph({ ratio }: { ratio: string }) {
   )
 }
 
+function defaultCreateImageValues(): CreateImageTurnRequest {
+  return {
+    prompt: "",
+    model: defaultImageModelId,
+    aspectRatio: defaultImageAspectRatio,
+    count: 1,
+  }
+}
+
 type CreateImageComposerProps = {
   pending?: boolean
   isSubmitting: boolean
@@ -63,12 +76,7 @@ export function CreateImageComposer({
   const canCreate = useCheckPermission({ createImage: ["create"] })
   const form = useForm<CreateImageTurnRequest>({
     resolver: zodResolver(createImageTurnRequestSchema),
-    defaultValues: {
-      prompt: "",
-      model: defaultImageModelId,
-      aspectRatio: defaultImageAspectRatio,
-      count: 1,
-    },
+    defaultValues: defaultCreateImageValues(),
   })
   const prompt = form.watch("prompt")
   const modelId = form.watch("model")
@@ -96,6 +104,7 @@ export function CreateImageComposer({
 
   async function submit(values: CreateImageTurnRequest) {
     await onSubmit(values)
+    form.reset(defaultCreateImageValues())
   }
 
   return (
@@ -240,11 +249,21 @@ export function CreateImageComposer({
               )}
             />
             <InputGroupButton
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="ml-auto"
+              disabled={isSubmitting || !canCreate}
+              aria-label="Clear"
+              onClick={() => form.reset(defaultCreateImageValues())}
+            >
+              <HugeiconsIcon icon={EraserIcon} strokeWidth={2} />
+            </InputGroupButton>
+            <InputGroupButton
               type="submit"
               variant="default"
               size="icon-lg"
               disabled={!canSubmit}
-              className="ml-auto"
               aria-label="Create image"
             >
               {isSubmitting ? (

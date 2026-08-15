@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import {
   AiMagicIcon,
   Cancel01Icon,
+  EraserIcon,
   ImageAdd01Icon,
   Mic01Icon,
   MicOff01Icon,
@@ -87,6 +88,21 @@ type CreateVideoComposerProps = {
 
 const defaultModel = getVideoModel(defaultVideoModelId)
 
+function defaultCreateVideoValues(
+  startFrameUrl: string | null = null
+): CreateVideoTurnRequest {
+  return {
+    prompt: "",
+    model: defaultVideoModelId,
+    aspectRatio: defaultVideoAspectRatio,
+    duration: defaultVideoDuration(defaultModel),
+    resolution: defaultVideoResolution(defaultModel),
+    generateAudio: true,
+    startFrameUrl,
+    endFrameUrl: null,
+  }
+}
+
 export function CreateVideoComposer({
   pending = false,
   isSubmitting,
@@ -102,16 +118,7 @@ export function CreateVideoComposer({
   )
   const form = useForm<CreateVideoTurnRequest>({
     resolver: zodResolver(createVideoTurnRequestSchema),
-    defaultValues: {
-      prompt: "",
-      model: defaultVideoModelId,
-      aspectRatio: defaultVideoAspectRatio,
-      duration: defaultVideoDuration(defaultModel),
-      resolution: defaultVideoResolution(defaultModel),
-      generateAudio: true,
-      startFrameUrl: initialStartFrameUrl,
-      endFrameUrl: null,
-    },
+    defaultValues: defaultCreateVideoValues(initialStartFrameUrl),
   })
   const prompt = form.watch("prompt")
   const modelId = form.watch("model")
@@ -206,6 +213,7 @@ export function CreateVideoComposer({
 
   async function submit(values: CreateVideoTurnRequest) {
     await onSubmit(values)
+    form.reset(defaultCreateVideoValues())
   }
 
   return (
@@ -555,11 +563,21 @@ export function CreateVideoComposer({
               </InputGroupButton>
             ) : null}
             <InputGroupButton
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="ml-auto"
+              disabled={isSubmitting || !canCreate}
+              aria-label="Clear"
+              onClick={() => form.reset(defaultCreateVideoValues())}
+            >
+              <HugeiconsIcon icon={EraserIcon} strokeWidth={2} />
+            </InputGroupButton>
+            <InputGroupButton
               type="submit"
               variant="default"
               size="icon-lg"
               disabled={!canSubmit}
-              className="ml-auto"
               aria-label="Create video"
             >
               {isSubmitting ? (
