@@ -1,4 +1,8 @@
-import { AiVideoIcon, Download01Icon } from "@hugeicons/core-free-icons"
+import {
+  AiVideoIcon,
+  Download01Icon,
+  PencilEdit01Icon,
+} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
 import { createPlayer } from "@videojs/react"
@@ -24,6 +28,25 @@ function downloadMedia(url: string, filename: string) {
   link.target = "_blank"
   link.rel = "noopener"
   link.click()
+}
+
+function EditImageButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ editImage: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      render={<Link to="/edit-image" search={{ sourceUrl: url }} />}
+    >
+      <HugeiconsIcon icon={PencilEdit01Icon} strokeWidth={2} />
+      Edit image
+    </Button>
+  )
 }
 
 function MakeVideoButton({ url }: { url: string }) {
@@ -108,6 +131,7 @@ export function EnhanceResult({ turn }: EnhanceResultProps) {
               }}
             />
             <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-2 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-within:opacity-100">
+              <EditImageButton url={mediaUrl} />
               <MakeVideoButton url={mediaUrl} />
               <Button
                 type="button"

@@ -3,6 +3,7 @@ import {
   Cancel01Icon,
   Download01Icon,
   MagicWand01Icon,
+  PencilEdit01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Link } from "@tanstack/react-router"
@@ -75,21 +76,21 @@ function downloadImage(url: string, filename: string) {
   link.click()
 }
 
-function DownloadButton({ url, filename }: { url: string; filename: string }) {
+function EditImageButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ editImage: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
   return (
     <Button
-      type="button"
       variant="secondary"
       size="sm"
-      aria-label="Download image"
-      onClick={(event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        downloadImage(url, filename)
-      }}
+      render={<Link to="/edit-image" search={{ sourceUrl: url }} />}
     >
-      <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
-      Download
+      <HugeiconsIcon icon={PencilEdit01Icon} strokeWidth={2} />
+      Edit image
     </Button>
   )
 }
@@ -134,6 +135,25 @@ function EnhanceButton({ url }: { url: string }) {
   )
 }
 
+function DownloadButton({ url, filename }: { url: string; filename: string }) {
+  return (
+    <Button
+      type="button"
+      variant="secondary"
+      size="sm"
+      aria-label="Download image"
+      onClick={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        downloadImage(url, filename)
+      }}
+    >
+      <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+      Download
+    </Button>
+  )
+}
+
 function ImageActions({
   url,
   filename,
@@ -150,8 +170,9 @@ function ImageActions({
         className
       )}
     >
-      <EnhanceButton url={url} />
+      <EditImageButton url={url} />
       <MakeVideoButton url={url} />
+      <EnhanceButton url={url} />
       <DownloadButton url={url} filename={filename} />
     </div>
   )

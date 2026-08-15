@@ -27,6 +27,25 @@ function downloadImage(url: string, filename: string) {
   link.click()
 }
 
+function EditAgainButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ editImage: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      render={<Link to="/edit-image" search={{ sourceUrl: url }} />}
+    >
+      <HugeiconsIcon icon={PencilEdit01Icon} strokeWidth={2} />
+      Edit image
+    </Button>
+  )
+}
+
 function MakeVideoButton({ url }: { url: string }) {
   const canCreate = useCheckPermission({ createVideo: ["create"] })
 
@@ -67,25 +86,6 @@ function EnhanceButton({ url }: { url: string }) {
   )
 }
 
-function EditAgainButton({ url }: { url: string }) {
-  const canCreate = useCheckPermission({ editImage: ["create"] })
-
-  if (!canCreate) {
-    return null
-  }
-
-  return (
-    <Button
-      variant="secondary"
-      size="sm"
-      render={<Link to="/edit-image" search={{ sourceUrl: url }} />}
-    >
-      <HugeiconsIcon icon={PencilEdit01Icon} strokeWidth={2} />
-      Edit image
-    </Button>
-  )
-}
-
 export function EditImageResult({ turn }: EditImageResultProps) {
   const mediaUrl = turn.url
   const filename = `${turn.prompt.slice(0, 40) || turn.id}.png`
@@ -114,8 +114,8 @@ export function EditImageResult({ turn }: EditImageResultProps) {
           />
           <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-2 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-within:opacity-100">
             <EditAgainButton url={mediaUrl} />
-            <EnhanceButton url={mediaUrl} />
             <MakeVideoButton url={mediaUrl} />
+            <EnhanceButton url={mediaUrl} />
             <Button
               type="button"
               variant="secondary"
