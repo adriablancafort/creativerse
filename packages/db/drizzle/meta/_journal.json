@@ -36,6 +36,13 @@
       "when": 1786778594050,
       "tag": "0004_rename",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786792984040,
+      "tag": "0005_edit_image",
+      "breakpoints": true
     }
   ]
 }
