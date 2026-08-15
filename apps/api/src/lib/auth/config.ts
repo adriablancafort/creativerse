@@ -6,6 +6,7 @@ import { db } from "@workspace/db/client"
 import * as schema from "@workspace/db/schema/auth"
 import { ac, admin, member, owner } from "@workspace/shared/auth/roles"
 import { env } from "@/lib/env"
+import { emailsQueue } from "@/lib/queues"
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -20,7 +21,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     async sendResetPassword(data) {
-      console.log("send-reset-password-email", {
+      await emailsQueue.add("send-reset-password", {
         to: data.user.email,
         name: data.user.name,
         url: data.url,
@@ -38,7 +39,7 @@ export const auth = betterAuth({
       async sendInvitationEmail(data) {
         const inviteLink = `${env.FRONTEND_URL}/join-organization?invitationId=${data.id}&email=${encodeURIComponent(data.email)}`
 
-        console.log("send-organization-invitation-email", {
+        await emailsQueue.add("send-organization-invitation", {
           to: data.email,
           url: inviteLink,
           organizationName: data.organization.name,

@@ -17,9 +17,11 @@
     "@workspace/db": "workspace:*",
     "@workspace/shared": "workspace:*",
     "better-auth": "catalog:",
+    "bullmq": "catalog:",
     "dotenv": "catalog:",
     "drizzle-orm": "catalog:",
     "hono": "4.13.1",
+    "ioredis": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

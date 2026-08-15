@@ -6,6 +6,7 @@ export const env = {
   PORT: Number(process.env.PORT ?? "3000"),
   NODE_ENV: process.env.NODE_ENV ?? "development",
   BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET ?? "",
+  REDIS_URL: process.env.REDIS_URL ?? "",
   R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID ?? "",
   R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID ?? "",
   R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY ?? "",
