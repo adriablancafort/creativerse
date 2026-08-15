@@ -27,8 +27,9 @@ export function CreateImageTurn({ turn }: CreateImageTurnProps) {
                 {turn.prompt}
               </BubbleContent>
             </Bubble>
-            <MessageFooter className="px-1">
+            <MessageFooter className="flex flex-wrap gap-1.5 px-1">
               <Badge variant="secondary">{model?.name ?? turn.model}</Badge>
+              <Badge variant="secondary">{turn.aspectRatio}</Badge>
             </MessageFooter>
           </MessageContent>
         </Message>
