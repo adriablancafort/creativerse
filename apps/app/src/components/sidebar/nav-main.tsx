@@ -1,5 +1,6 @@
 import {
   AiImageIcon,
+  AiMagicIcon,
   AiVideoIcon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
@@ -7,6 +8,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { useQuery } from "@tanstack/react-query"
 import { Link, useMatchRoute, useRouterState } from "@tanstack/react-router"
 
+import { formatEnhanceSessionTitle } from "@workspace/shared/api/enhance/models"
+import type { EnhanceSessionListResponse } from "@workspace/shared/api/enhance/types"
 import { formatImageSessionTitle } from "@workspace/shared/api/image/models"
 import type { ImageSessionListResponse } from "@workspace/shared/api/image/types"
 import { formatVideoSessionTitle } from "@workspace/shared/api/video/models"
@@ -20,33 +23,51 @@ import {
 } from "@workspace/ui/components/sidebar"
 import { api } from "@/lib/api"
 
+type SessionMode = "image" | "video" | "enhance"
+
 export function NavMain() {
   const matchRoute = useMatchRoute()
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   })
-  const isVideoMode = pathname.startsWith("/video")
+  const mode: SessionMode = pathname.startsWith("/video")
+    ? "video"
+    : pathname.startsWith("/enhance")
+      ? "enhance"
+      : "image"
   const { data: imageSessions = [] } = useQuery({
     queryKey: ["image-sessions"],
     queryFn: () => api.get<ImageSessionListResponse>("/api/image/sessions"),
-    enabled: !isVideoMode,
+    enabled: mode === "image",
   })
   const { data: videoSessions = [] } = useQuery({
     queryKey: ["video-sessions"],
     queryFn: () => api.get<VideoSessionListResponse>("/api/video/sessions"),
-    enabled: isVideoMode,
+    enabled: mode === "video",
   })
-  const sessions = isVideoMode
-    ? videoSessions.map((session) => ({
-        id: session.id,
-        title: formatVideoSessionTitle(session.title),
-        to: "/video/$sessionId" as const,
-      }))
-    : imageSessions.map((session) => ({
-        id: session.id,
-        title: formatImageSessionTitle(session.title),
-        to: "/image/$sessionId" as const,
-      }))
+  const { data: enhanceSessions = [] } = useQuery({
+    queryKey: ["enhance-sessions"],
+    queryFn: () => api.get<EnhanceSessionListResponse>("/api/enhance/sessions"),
+    enabled: mode === "enhance",
+  })
+  const sessions =
+    mode === "video"
+      ? videoSessions.map((session) => ({
+          id: session.id,
+          title: formatVideoSessionTitle(session.title),
+          to: "/video/$sessionId" as const,
+        }))
+      : mode === "enhance"
+        ? enhanceSessions.map((session) => ({
+            id: session.id,
+            title: formatEnhanceSessionTitle(session.title),
+            to: "/enhance/$sessionId" as const,
+          }))
+        : imageSessions.map((session) => ({
+            id: session.id,
+            title: formatImageSessionTitle(session.title),
+            to: "/image/$sessionId" as const,
+          }))
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -70,6 +91,16 @@ export function NavMain() {
             >
               <HugeiconsIcon icon={AiVideoIcon} strokeWidth={2} />
               <span>Create Video</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              tooltip="Enhance"
+              isActive={Boolean(matchRoute({ to: "/enhance", fuzzy: false }))}
+              render={<Link to="/enhance" />}
+            >
+              <HugeiconsIcon icon={AiMagicIcon} strokeWidth={2} />
+              <span>Enhance</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

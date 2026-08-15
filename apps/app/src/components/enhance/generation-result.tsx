@@ -1,0 +1,135 @@
+import { Download01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Link } from "@tanstack/react-router"
+import { createPlayer } from "@videojs/react"
+import { MinimalVideoSkin, Video, videoFeatures } from "@videojs/react/video"
+import "@videojs/react/video/minimal-skin.css"
+import { useState } from "react"
+
+import type { EnhanceGeneration } from "@workspace/shared/api/enhance/types"
+import { Button } from "@workspace/ui/components/button"
+import { Spinner } from "@workspace/ui/components/spinner"
+import { useCheckPermission } from "@/lib/auth/permissions"
+
+const Player = createPlayer({ features: videoFeatures })
+
+type GenerationResultProps = {
+  generation: EnhanceGeneration
+}
+
+function downloadMedia(url: string, filename: string) {
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  link.target = "_blank"
+  link.rel = "noopener"
+  link.click()
+}
+
+function MakeVideoButton({ url }: { url: string }) {
+  const canCreate = useCheckPermission({ video: ["create"] })
+
+  if (!canCreate) {
+    return null
+  }
+
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      render={<Link to="/video" search={{ startFrameUrl: url }} />}
+    >
+      Make video
+    </Button>
+  )
+}
+
+export function GenerationResult({ generation }: GenerationResultProps) {
+  const isVideo = generation.mediaType === "video"
+  const mediaUrl = generation.url
+  const filename = isVideo
+    ? `enhanced-${generation.id}.mp4`
+    : `enhanced-${generation.id}.png`
+  const [aspectRatio, setAspectRatio] = useState(isVideo ? "16 / 9" : "1 / 1")
+
+  return (
+    <div
+      className="group/cell relative min-w-0 overflow-hidden rounded-2xl bg-muted [&_.media-button--pip]:hidden!"
+      style={{ aspectRatio }}
+    >
+      {mediaUrl ? (
+        isVideo ? (
+          <>
+            <Player.Provider>
+              <MinimalVideoSkin className="size-full rounded-2xl">
+                <Video
+                  src={mediaUrl}
+                  playsInline
+                  autoPlay
+                  muted
+                  loop
+                  disablePictureInPicture
+                  disableRemotePlayback
+                  onLoadedMetadata={(event) => {
+                    const { videoWidth, videoHeight } = event.currentTarget
+
+                    if (videoWidth > 0 && videoHeight > 0) {
+                      setAspectRatio(`${videoWidth} / ${videoHeight}`)
+                    }
+                  }}
+                />
+              </MinimalVideoSkin>
+            </Player.Provider>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              aria-label="Download video"
+              className="absolute top-3 right-3 z-10 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-visible:opacity-100"
+              onClick={() => downloadMedia(mediaUrl, filename)}
+            >
+              <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+              Download
+            </Button>
+          </>
+        ) : (
+          <>
+            <img
+              src={mediaUrl}
+              alt=""
+              className="size-full object-contain"
+              onLoad={(event) => {
+                const { naturalWidth, naturalHeight } = event.currentTarget
+
+                if (naturalWidth > 0 && naturalHeight > 0) {
+                  setAspectRatio(`${naturalWidth} / ${naturalHeight}`)
+                }
+              }}
+            />
+            <div className="absolute top-3 right-3 z-10 flex flex-col items-end gap-2 opacity-0 transition-opacity group-hover/cell:opacity-100 focus-within:opacity-100">
+              <MakeVideoButton url={mediaUrl} />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                aria-label="Download image"
+                onClick={() => downloadMedia(mediaUrl, filename)}
+              >
+                <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+                Download
+              </Button>
+            </div>
+          </>
+        )
+      ) : generation.status === "failed" ? (
+        <div className="flex size-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
+          {generation.error ?? "Enhancement failed"}
+        </div>
+      ) : (
+        <div className="flex size-full items-center justify-center">
+          <Spinner className="size-5" />
+        </div>
+      )}
+    </div>
+  )
+}
